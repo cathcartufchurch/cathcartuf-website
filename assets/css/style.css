@@ -52,7 +52,15 @@ header p {
     opacity: 0.8;
     margin-top: 4px;
 }
+.header-inner {
+    display: flex;
+    align-items: center;
+}
 
+.logo {
+    height: 80px;
+    width: auto;
+}
 /* ===== NAVIGATION ===== */
 nav {
     background-color: #163d63;
