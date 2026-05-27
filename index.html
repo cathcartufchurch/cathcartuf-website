@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cathcart United Free Church</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Cathcart United Free Church</h1>
+            <p>Worship &bull; Community &bull; Faith</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="meetings.html">Meetings</a></li>
+                <li><a href="whats-on.html">What's On</a></li>
+                <li><a href="off-the-cuf.html">Off the CUF</a></li>
+                <li><a href="sermons.html">Sermons</a></li>
+                <li><a href="prayer.html">Prayer</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+
+            <h2>Welcome to Cathcart United Free Church</h2>
+
+            <p>We are a warm and welcoming congregation based in the Cathcart area of Glasgow. 
+            Whether you are a long-standing member or visiting for the first time, 
+            you are very welcome here.</p>
+
+            <p>We meet every Sunday for worship and throughout the week for a variety 
+            of activities and community events. Please explore our site to find out 
+            more about who we are and what we do.</p>
+
+            <h2>Upcoming Events</h2>
+
+            <div class="event-list" id="events-list">
+                <p>Loading events...</p>
+            </div>
+
+            <p><a href="whats-on.html">See all upcoming events →</a></p>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Cathcart United Free Church &bull; Glasgow &bull; 
+            <a href="contact.html">Contact Us</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Netlify Identity redirect handling
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

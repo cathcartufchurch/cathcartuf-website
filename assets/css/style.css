@@ -1,0 +1,166 @@
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #333333;
+    background-color: #ffffff;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    color: #1a4b7a;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===== LAYOUT ===== */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ===== HEADER ===== */
+header {
+    background-color: #1a4b7a;
+    color: #ffffff;
+    padding: 20px 0;
+}
+
+header h1 {
+    font-size: 1.8em;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+header p {
+    font-size: 0.9em;
+    opacity: 0.8;
+    margin-top: 4px;
+}
+
+/* ===== NAVIGATION ===== */
+nav {
+    background-color: #163d63;
+    padding: 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+nav ul li a {
+    display: block;
+    color: #ffffff;
+    padding: 12px 18px;
+    font-size: 0.9em;
+    font-family: Arial, sans-serif;
+    text-decoration: none;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    background-color: #1a4b7a;
+    text-decoration: none;
+}
+
+/* ===== MAIN CONTENT ===== */
+main {
+    padding: 40px 0;
+}
+
+h1, h2, h3 {
+    color: #1a4b7a;
+    margin-bottom: 15px;
+    font-weight: normal;
+}
+
+h2 {
+    font-size: 1.6em;
+    border-bottom: 1px solid #dddddd;
+    padding-bottom: 8px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 1.2em;
+    margin-top: 25px;
+}
+
+p {
+    margin-bottom: 15px;
+}
+
+/* ===== EVENTS ===== */
+.event-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.event-card {
+    border: 1px solid #dddddd;
+    border-left: 4px solid #1a4b7a;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.event-card h3 {
+    margin-top: 0;
+    color: #1a4b7a;
+}
+
+.event-meta {
+    font-size: 0.85em;
+    color: #666666;
+    font-family: Arial, sans-serif;
+    margin-bottom: 10px;
+}
+
+.event-card img {
+    margin-top: 12px;
+    border-radius: 4px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background-color: #1a4b7a;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    font-size: 0.85em;
+    font-family: Arial, sans-serif;
+    margin-top: 40px;
+}
+
+footer a {
+    color: #aaccee;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.3em;
+    }
+
+    nav ul li a {
+        padding: 10px 12px;
+        font-size: 0.85em;
+    }
+}
