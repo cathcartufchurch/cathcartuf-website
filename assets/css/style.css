@@ -65,12 +65,20 @@ header p {
 nav {
     background-color: #163d63;
     padding: 0;
+    position: relative;
+    z-index: 100;
 }
 
 nav ul {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    position: relative;
 }
 
 nav ul li a {
@@ -80,12 +88,65 @@ nav ul li a {
     font-size: 0.9em;
     font-family: Arial, sans-serif;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 nav ul li a:hover,
 nav ul li a.active {
     background-color: #1a4b7a;
     text-decoration: none;
+}
+
+/* ===== DROPDOWNS ===== */
+nav ul li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #163d63;
+    min-width: 180px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    flex-direction: column;
+}
+
+nav ul li:hover ul {
+    display: flex;
+}
+
+nav ul li ul li a {
+    padding: 10px 18px;
+    font-size: 0.85em;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+nav ul li ul li a:hover {
+    background-color: #1a4b7a;
+}
+
+nav ul li ul li a:hover {
+    background-color: #1a4b7a;
+}
+
+/* ADD THESE TWO NEW RULES HERE */
+nav ul li ul {
+    background-color: #1e4f85;
+    border-left: 3px solid rgba(255,255,255,0.3);
+}
+
+nav ul li ul li a {
+    padding-left: 22px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    nav ul {
+        flex-direction: column;
+    }
+
+    nav ul li ul {
+        position: static;
+        box-shadow: none;
+    }
 }
 
 /* ===== MAIN CONTENT ===== */
