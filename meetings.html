@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meetings - Cathcart United Free Church</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <img src="assets/images/logo.png" alt="Cathcart United Free Church" class="logo" />
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="meetings.html" class="active">Meetings</a>
+                    <ul>
+                        <li><a href="meetings.html#sunday">Sunday at 11</a></li>
+                        <li><a href="meetings.html#midweek">Midweek at 10:30</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="prayer.html">Prayer</a>
+                    <ul>
+                        <li><a href="prayer.html#prayer-time">Prayer Time</a></li>
+                        <li><a href="prayer.html#prayer-request">Prayer Request</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="church-life.html">Church Life</a>
+                    <ul>
+                        <li><a href="off-the-cuf.html">Off the CUF</a></li>
+                        <li><a href="partnerships.html">Partnerships</a></li>
+                        <li><a href="church-life.html#buddy-churches">Buddy Churches</a></li>
+                    </ul>
+                </li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="sermons.html">Sermons</a></li>
+                <li><a href="find-us.html">How to Find Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+
+            <h2>Meetings</h2>
+            <p>We would love to see you at any of our gatherings. 
+            Whether you are a regular churchgoer or simply curious, 
+            you are very welcome at Cathcart United Free Church.</p>
+
+            <!-- SUNDAY -->
+            <div class="section-card" id="sunday">
+                <div class="section-card-header">
+                    <h3>Sunday at 11</h3>
+                </div>
+                <div class="section-card-body">
+                    <p>We meet together in the church and on Zoom every Sunday from 
+                    <strong>11:00am to 12:15pm</strong>. Our Sunday gathering is the 
+                    heart of our week together — a time to worship God, explore the 
+                    Bible, pray and sing. Whether you are joining us in person or 
+                    online, you are warmly welcome.</p>
+
+                    <p>After the service there is tea and coffee, and plenty of 
+                    opportunity to chat and get to know each other. We are a 
+                    friendly congregation and nobody need feel they are on their own.</p>
+
+                    <div class="photo-row">
+                        <div class="photo-placeholder">
+                            <img src="assets/images/logo.png" alt="Sunday worship at Cathcart United Free Church" />
+                        </div>
+                        <div class="photo-placeholder">
+                            <img src="assets/images/logo.png" alt="Sunday worship at Cathcart United Free Church" />
+                        </div>
+                        <div class="photo-placeholder">
+                            <img src="assets/images/logo.png" alt="Sunday worship at Cathcart United Free Church" />
+                        </div>
+                    </div>
+
+                    <h4>Join us on Zoom or YouTube</h4>
+                    <p>We also livestream our Sunday service on our 
+                    <a href="https://www.youtube.com/@cathcartufchurch7834/videos" 
+                    target="_blank" rel="noopener">YouTube channel</a>. 
+                    To join us on Zoom please 
+                    <a href="contact.html">contact us by email</a> 
+                    and we will send you the details.</p>
+                </div>
+            </div>
+
+            <!-- MIDWEEK -->
+            <div class="section-card" id="midweek">
+                <div class="section-card-header">
+                    <h3>Midweek — Time for Reflection</h3>
+                </div>
+                <div class="section-card-body">
+                    <p>Every Wednesday at <strong>10:30am</strong> we gather in the 
+                    church building for a quiet 40-minute reflective time together. 
+                    This is a gentler, more contemplative gathering — a space to 
+                    pause mid-week and reconnect with God.</p>
+
+                    <p>Each session includes a Bible reading, a short talk and 
+                    music. There is no Zoom option for this gathering — it is 
+                    purely in person, which adds to its intimate and unhurried 
+                    character. All are welcome.</p>
+
+                    <div class="photo-row">
+                        <div class="photo-placeholder">
+                            <img src="assets/images/logo.png" alt="Midweek gathering at Cathcart United Free Church" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Cathcart United Free Church &bull; Glasgow &bull;
+            <a href="contact.html">Contact Us</a></p>
+        </div>
+    </footer>
+
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

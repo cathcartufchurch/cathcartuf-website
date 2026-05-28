@@ -207,6 +207,63 @@ p {
     border-radius: 4px;
 }
 
+/* ===== SECTION CARDS ===== */
+.section-card {
+    margin-bottom: 30px;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.section-card-header {
+    background-color: #1a4b7a;
+    padding: 12px 20px;
+}
+
+.section-card-header h3 {
+    color: #ffffff;
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.section-card-body {
+    padding: 20px;
+    background-color: #f0f4f8;
+}
+
+.section-card-body h4 {
+    color: #1a4b7a;
+    margin: 20px 0 8px 0;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+/* ===== PHOTO ROW ===== */
+.photo-row {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.photo-placeholder {
+    flex: 1;
+    min-width: 150px;
+    background-color: #dddddd;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.photo-placeholder img {
+    max-height: 120px;
+    width: auto;
+    opacity: 0.4;
+}
+
 /* ===== FOOTER ===== */
 footer {
     background-color: #1a4b7a;

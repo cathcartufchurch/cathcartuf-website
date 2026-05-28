@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PAGE TITLE - Cathcart United Free Church</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <img src="assets/images/logo.png" alt="Cathcart United Free Church" class="logo" />
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="meetings.html">Meetings</a>
+                    <ul>
+                        <li><a href="meetings.html#sunday">Sunday at 11</a></li>
+                        <li><a href="meetings.html#midweek">Midweek at 10:30</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="prayer.html">Prayer</a>
+                    <ul>
+                        <li><a href="prayer.html#prayer-time">Prayer Time</a></li>
+                        <li><a href="prayer.html#prayer-request">Prayer Request</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="church-life.html">Church Life</a>
+                    <ul>
+                        <li><a href="off-the-cuf.html">Off the CUF</a></li>
+                        <li><a href="partnerships.html">Partnerships</a></li>
+                        <li><a href="church-life.html#buddy-churches">Buddy Churches</a></li>
+                    </ul>
+                </li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="sermons.html">Sermons</a></li>
+                <li><a href="find-us.html">How to Find Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+
+            <h2>PAGE HEADING</h2>
+
+            <!-- PAGE CONTENT GOES HERE -->
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Cathcart United Free Church &bull; Glasgow &bull; 
+            <a href="contact.html">Contact Us</a></p>
+        </div>
+    </footer>
+
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
