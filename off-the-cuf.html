@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Off the CUF - Cathcart United Free Church</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <img src="assets/images/logo.png" alt="Cathcart United Free Church" class="logo" />
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="meetings.html">Meetings</a>
+                    <ul>
+                        <li><a href="meetings.html#sunday">Sunday at 11</a></li>
+                        <li><a href="meetings.html#midweek">Midweek at 10:30</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="prayer.html">Prayer</a>
+                    <ul>
+                        <li><a href="prayer.html#prayer-time">Prayer Time</a></li>
+                        <li><a href="prayer.html#prayer-request">Prayer Request</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="church-life.html">Church Life</a>
+                    <ul>
+                        <li><a href="off-the-cuf.html" class="active">Off the CUF</a></li>
+                        <li><a href="partnerships.html">Partnerships</a></li>
+                        <li><a href="church-life.html#buddy-churches">Buddy Churches</a></li>
+                    </ul>
+                </li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="sermons.html">Sermons</a></li>
+                <li><a href="find-us.html">How to Find Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+
+            <h2>Off the CUF</h2>
+
+<!-- INTRO CARD -->
+<div class="section-card">
+    <div class="section-card-header">
+        <h3>First Saturday of the month, 10:30am–12pm</h3>
+    </div>
+    <div class="section-card-body">
+        <p>Held at <strong>Cathcart United Free Church, 7 Struan Road, Glasgow</strong></p>
+        <p>All welcome — any children will be the responsibility of a parent or carer.</p>
+        <p><strong>Cost: Free!</strong></p>
+    </div>
+</div>
+
+<!-- WHAT'S ON OFFER -->
+<div class="cuf-features">
+    <div class="cuf-feature">
+        <h3>Food</h3>
+        <p>Refuel with hot drinks and a simple brunch.</p>
+    </div>
+    <div class="cuf-feature">
+        <h3>Friendship</h3>
+        <p>Play a game, bring a hobby, meet new people.</p>
+    </div>
+    <div class="cuf-feature">
+        <h3>Faith</h3>
+        <p>Discuss current topics with personal reflections 
+        and a chance to ask questions.</p>
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div class="section-card">
+    <div class="section-card-header">
+        <h3>About Off the CUF</h3>
+    </div>
+    <div class="section-card-body">
+        <p>On the first Saturday of each month we gather in an informal 
+        café-style setting to explore a theme that speaks to our shared 
+        human experience. We introduce different perspectives, including 
+        Christian viewpoints, creating space for open conversation where 
+        we can listen, share, and learn from each other.</p>
+
+        <p>Topics explored in the past include: Joy, Global aid, Peace, 
+        Olympic inspirations, God's love.</p>
+
+        <div class="photo-row">
+            <div class="photo-placeholder">
+                <img src="assets/images/logo.png" alt="Off the CUF gathering" />
+            </div>
+            <div class="photo-placeholder">
+                <img src="assets/images/logo.png" alt="Off the CUF gathering" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- VIDEO -->
+<div class="section-card">
+    <div class="section-card-header">
+        <h3>See it for yourself</h3>
+    </div>
+    <div class="section-card-body">
+        <div class="video-container">
+            <video controls>
+                <source src="https://cathcartuf.org.uk/wp-content/uploads/2026/04/Three.mp4" 
+                type="video/mp4" />
+                Yo
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Cathcart United Free Church &bull; Glasgow &bull; 
+            <a href="contact.html">Contact Us</a></p>
+        </div>
+    </footer>
+
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
