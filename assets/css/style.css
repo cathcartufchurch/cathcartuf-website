@@ -128,8 +128,8 @@ nav ul li:hover > a {
 }
 
 nav ul li ul li a.active {
-    background-color: #1a4b7a;
-    border-left: 5px solid #1F5E6B;
+    background-color: #14395C;
+    border-left: 5px solid #DEBDEF;
 }
 
 /* ADD THESE TWO NEW RULES HERE */
