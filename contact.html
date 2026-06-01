@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us - Cathcart United Free Church</title>
+    <meta name="description" content="Get in touch with Cathcart United Free Church, Glasgow." />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <img src="assets/images/logo.png" alt="Cathcart United Free Church" class="logo" />
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="meetings.html">Meetings</a>
+                    <ul>
+                        <li><a href="meetings.html">Meetings</a></li>
+                        <li><a href="meetings.html#sunday">Sunday at 11</a></li>
+                        <li><a href="meetings.html#midweek">Midweek at 10:30</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="prayer.html">Prayer</a>
+                    <ul>
+                        <li><a href="prayer.html">Prayer</a></li>
+                        <li><a href="prayer.html#prayer-time">Prayer Time</a></li>
+                        <li><a href="prayer.html#prayer-request">Prayer Request</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="church-life.html">Church Life</a>
+                    <ul>
+                        <li><a href="church-life.html">Church Life</a></li>
+                        <li><a href="off-the-cuf.html">Off the CUF</a></li>
+                        <li><a href="partnerships.html">Partnerships</a></li>
+                        <li><a href="church-life.html#buddy-churches">Buddy Churches</a></li>
+                    </ul>
+                </li>
+                <li><a href="events.html">Events</a></li>
+                <li><a href="sermons.html">Sermons</a></li>
+                <li><a href="find-us.html">How to Find Us</a></li>
+                <li><a href="contact.html" class="active">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+
+            <h2>Contact Us</h2>
+
+            <p>Interested in finding out more about us? We would love to hear from you — whether you have
+            a question, want to find out more about our services, or just want to say hello.</p>
+
+            <p>Please remember to include your phone number or email address if you would like us to reply.</p>
+
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Send Us a Message</h3>
+                </div>
+                <div class="section-card-body">
+
+                    <!-- Form submission to be wired up via Netlify Forms or Azure Functions -->
+                    <form class="contact-form" id="contact-form" name="contact" netlify>
+
+                        <div class="form-group">
+                            <label for="name">Name <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" required
+                                placeholder="Your name" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email"
+                                placeholder="Your email address" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone"
+                                placeholder="Your phone number" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message <span class="required">*</span></label>
+                            <textarea id="message" name="message" required
+                                placeholder="Your message or question..."
+                                rows="6"></textarea>
+                        </div>
+
+                        <div class="form-group form-check">
+                            <input type="checkbox" id="zoom" name="zoom" />
+                            <label for="zoom">Please send me details of how to join our Sunday
+                            service on Zoom</label>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Send Message</button>
+
+                    </form>
+
+                    <p class="form-note">Fields marked <span class="required">*</span> are required.
+                    We aim to respond within 2–3 working days.</p>
+
+                </div>
+            </div>
+
+            <!-- DIRECT CONTACT -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Other Ways to Get in Touch</h3>
+                </div>
+                <div class="section-card-body">
+
+                    <h4>Email</h4>
+                    <p><a href="mailto:office@cathcartuf.org.uk">office@cathcartuf.org.uk</a></p>
+
+                    <h4>Find Us</h4>
+                    <p>Cathcart United Free Church<br />
+                    7 Struan Road<br />
+                    Glasgow G44 3AT</p>
+                    <p><a href="find-us.html" class="section-link">How to find us →</a></p>
+
+                    <h4>Follow Us</h4>
+                    <p>
+                        <a href="https://www.facebook.com/cathcartuf/" target="_blank"
+                        rel="noopener">Facebook — facebook.com/cathcartuf</a>
+                    </p>
+                    <p>
+                        <a href="https://www.youtube.com/@cathcartufchurch7834/videos"
+                        target="_blank" rel="noopener">YouTube — Sunday services and recordings</a>
+                    </p>
+
+                    <h4>Prayer Requests</h4>
+                    <p>If you would like us to pray for you please use our dedicated
+                    <a href="prayer.html#prayer-request">prayer request form</a>.</p>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Cathcart United Free Church &bull; 7 Struan Road, Glasgow G44 3AT &bull;
+                <a href="contact.html">Contact Us</a> &bull;
+                <a href="https://www.facebook.com/cathcartuf/" target="_blank" rel="noopener">Facebook</a>
+            </p>
+            <p>Scottish Registered Charity No: SC001573</p>
+        </div>
+    </footer>
+
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

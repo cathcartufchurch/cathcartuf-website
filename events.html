@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Events - Cathcart United Free Church</title>
+    <meta name="description" content="Upcoming events at Cathcart United Free Church, Glasgow." />
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <img src="assets/images/logo.png" alt="Cathcart United Free Church" class="logo" />
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="meetings.html">Meetings</a>
+                    <ul>
+                        <li><a href="meetings.html">Meetings</a></li>
+                        <li><a href="meetings.html#sunday">Sunday at 11</a></li>
+                        <li><a href="meetings.html#midweek">Midweek at 10:30</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="prayer.html">Prayer</a>
+                    <ul>
+                        <li><a href="prayer.html">Prayer</a></li>
+                        <li><a href="prayer.html#prayer-time">Prayer Time</a></li>
+                        <li><a href="prayer.html#prayer-request">Prayer Request</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="church-life.html">Church Life</a>
+                    <ul>
+                        <li><a href="church-life.html">Church Life</a></li>
+                        <li><a href="off-the-cuf.html">Off the CUF</a></li>
+                        <li><a href="partnerships.html">Partnerships</a></li>
+                        <li><a href="church-life.html#buddy-churches">Buddy Churches</a></li>
+                    </ul>
+                </li>
+                <li><a href="events.html" class="active">Events</a></li>
+                <li><a href="sermons.html">Sermons</a></li>
+                <li><a href="find-us.html">How to Find Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+
+            <h2>Events</h2>
+            <p>Here you will find details of special events and activities coming up at Cathcart United Free Church
+            and in our wider community. For our regular weekly meetings please see the
+            <a href="meetings.html">Meetings page</a>.</p>
+            <!-- JUNE 2026 -->
+            <h3 class="event-month">June 2026</h3>
+            <div class="event-list">
+                <div class="event-card">
+                    <p class="event-meta">Saturday 6th June &bull; 8:30–10am &bull; Cathcart United Free Church</p>
+                    <h3>Prayer Breakfast</h3>
+                    <p>Our monthly joint Prayer Breakfast with Cathcart Church of Scotland and Cathcart Baptist Church.
+                    Breakfast is served from 8:30–9am followed by a time of prayer together around a theme. Topic TBA.</p>
+                    <p>All are welcome.</p>
+                </div>
+                <div class="event-card">
+                    <p class="event-meta">Saturday 6th June &bull; 10:30am–12pm &bull; Cathcart United Free Church</p>
+                    <h3>Off the CUF</h3>
+                    <p>Our monthly café-style gathering exploring a theme that speaks to our shared human experience.
+                    Food, Friendship and Faith — free and open to all. Children welcome, under the responsibility
+                    of a parent or carer.</p>
+                    <p><a href="off-the-cuf.html" class="section-link">Find out more about Off the CUF →</a></p>
+                </div>
+                <div class="event-card">
+                    <p class="event-meta">Sunday 28th June &bull; 11am &bull; Cathcart United Free Church</p>
+                    <h3>Love Your Church — Sunday Service</h3>
+                    <p>We continue our series looking at the early church in Acts 1–12. This Sunday we will be
+                    exploring the second chapter of the book <em>Love Your Church</em> by Tony Merida — what it
+                    means to be a welcoming church.</p>
+                    <p>Over the coming months we are encouraging people to read the book and discuss it with others.
+                    Once a month in the Sunday morning service we'll take up one of the eight themes:</p>
+                    <ul>
+                        <li>Belonging (26th April) ✓</li>
+                        <li>Welcoming (31st May) ✓</li>
+                        <li><strong>Gathering</strong></li>
+                        <li>Caring</li>
+                        <li>Service</li>
+                        <li>Honouring</li>
+                        <li>Witnessing</li>
+                        <li>Sending</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- REGULAR EVENTS NOTE -->
+            <div class="section-card">
+                <div class="section-card-header">
+                    <h3>Regular Activities</h3>
+                </div>
+                <div class="section-card-body">
+                    <p>As well as the special events listed above, we have a number of regular activities
+                    running throughout the year. Please see the following pages for details:</p>
+                    <ul>
+                        <li><a href="meetings.html">Sunday and Wednesday services</a></li>
+                        <li><a href="prayer.html#prayer-time">Monday prayer meetings</a></li>
+                        <li><a href="church-life.html">Fellowship groups, Moments Cafe, Quiet Spaces and Renew Wellbeing</a></li>
+                        <li><a href="off-the-cuf.html">Off the CUF — first Saturday of every month</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Cathcart United Free Church &bull; 7 Struan Road, Glasgow G44 3AT &bull;
+                <a href="contact.html">Contact Us</a> &bull;
+                <a href="https://www.facebook.com/cathcartuf/" target="_blank" rel="noopener">Facebook</a>
+            </p>
+            <p>Scottish Registered Charity No: SC001573</p>
+        </div>
+    </footer>
+
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
