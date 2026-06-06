@@ -1,13 +1,14 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact Us - Cathcart United Free Church</title>
     <meta name="description" content="Get in touch with Cathcart United Free Church, Glasgow." />
     <link rel="stylesheet" href="assets/css/style.css" />
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
+
 <body>
 
     <header>
@@ -59,7 +60,7 @@
             <h2>Contact Us</h2>
 
             <p>Interested in finding out more about us? We would love to hear from you — whether you have
-            a question, want to find out more about our services, or just want to say hello.</p>
+                a question, want to find out more about our services, or just want to say hello.</p>
 
             <p>Please remember to include your phone number or email address if you would like us to reply.</p>
 
@@ -69,82 +70,127 @@
                 </div>
                 <div class="section-card-body">
 
-                    <!-- Form submission to be wired up via Netlify Forms or Azure Functions -->
-                    <form class="contact-form" id="contact-form" name="contact" netlify>
+                    <form class="contact-form" id="contactForm">
 
                         <div class="form-group">
-                            <label for="name">Name <span class="required">*</span></label>
-                            <input type="text" id="name" name="name" required
-                                placeholder="Your name" />
+                            <label for="contactName">Name <span class="required">*</span></label>
+                            <input type="text" id="contactName" name="name" required placeholder="Your name" />
                         </div>
 
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email"
+                            <label for="contactEmail">Email <span class="required">*</span></label>
+                            <input type="email" id="contactEmail" name="email" required
                                 placeholder="Your email address" />
                         </div>
 
                         <div class="form-group">
-                            <label for="phone">Phone</label>
-                            <input type="tel" id="phone" name="phone"
-                                placeholder="Your phone number" />
+                            <label for="contactPhone">Phone</label>
+                            <input type="tel" id="contactPhone" name="phone" placeholder="Your phone number" />
                         </div>
 
                         <div class="form-group">
-                            <label for="message">Message <span class="required">*</span></label>
-                            <textarea id="message" name="message" required
-                                placeholder="Your message or question..."
-                                rows="6"></textarea>
+                            <label for="contactMessage">Message <span class="required">*</span></label>
+                            <textarea id="contactMessage" name="message" required
+                                placeholder="Your message or question..." rows="6"></textarea>
                         </div>
 
                         <div class="form-group form-check">
-                            <input type="checkbox" id="zoom" name="zoom" />
-                            <label for="zoom">Please send me details of how to join our Sunday
-                            service on Zoom</label>
+                            <input type="checkbox" id="contactZoom" name="zoom" />
+                            <label for="contactZoom">Please send me details of how to join our Sunday service on
+                                Zoom</label>
                         </div>
 
                         <button type="submit" class="btn-submit">Send Message</button>
+                        <div id="contactStatus"></div>
 
                     </form>
 
-                    <p class="form-note">Fields marked <span class="required">*</span> are required.
-                    We aim to respond within 2–3 working days.</p>
+                    <p class="form-note">Fields marked <span class="required">*</span> are required. We aim to respond
+                        within 2–3 working days.</p>
 
                 </div>
             </div>
 
-            <!-- DIRECT CONTACT -->
-            <div class="section-card">
-                <div class="section-card-header">
-                    <h3>Other Ways to Get in Touch</h3>
-                </div>
-                <div class="section-card-body">
+            <script>
+                document.getElementById('contactForm').addEventListener('submit', async function (e) {
+                    e.preventDefault();
 
-                    <h4>Email</h4>
-                    <p><a href="mailto:office@cathcartuf.org.uk">office@cathcartuf.org.uk</a></p>
+                    const statusDiv = document.getElementById('contactStatus');
+                    statusDiv.textContent = 'Sending...';
+                    statusDiv.style.color = 'black';
 
-                    <h4>Find Us</h4>
-                    <p>Cathcart United Free Church<br />
+                    const formData = {
+                        name: document.getElementById('contactName').value,
+                        email: document.getElementById('contactEmail').value,
+                        subject: document.getElementById('contactMessage').value.substring(0, 50) + '...',
+                        message: document.getElementById('contactMessage').value,
+                        phone: document.getElementById('contactPhone').value || null,
+                        wantZoom: document.getElementById('contactZoom').checked
+                    };
+
+                    try {
+                        const response = await fetch('/api/contact', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            statusDiv.textContent = 'Thank you! Your message has been sent. We will get back to you soon.';
+                            statusDiv.style.color = 'green';
+                            document.getElementById('contactForm').reset();
+                        } else {
+                            statusDiv.textContent = data.error || 'Failed to send message. Please try again.';
+                            statusDiv.style.color = 'red';
+                        }
+                    } catch (error) {
+                        statusDiv.textContent = 'Error sending message. Please try again.';
+                        statusDiv.style.color = 'red';
+                        console.error('Error:', error);
+                    }
+                });
+            </script>
+
+        </div>
+        </div>
+
+        <!-- DIRECT CONTACT -->
+        <div class="section-card">
+            <div class="section-card-header">
+                <h3>Other Ways to Get in Touch</h3>
+            </div>
+            <div class="section-card-body">
+
+                <h4>Email</h4>
+                <p><a href="mailto:office@cathcartuf.org.uk">office@cathcartuf.org.uk</a></p>
+
+                <h4>Find Us</h4>
+                <p>Cathcart United Free Church<br />
                     7 Struan Road<br />
                     Glasgow G44 3AT</p>
-                    <p><a href="find-us.html" class="section-link">How to find us →</a></p>
+                <p><a href="find-us.html" class="section-link">How to find us →</a></p>
 
-                    <h4>Follow Us</h4>
-                    <p>
-                        <a href="https://www.facebook.com/cathcartuf/" target="_blank"
-                        rel="noopener">Facebook — facebook.com/cathcartuf</a>
-                    </p>
-                    <p>
-                        <a href="https://www.youtube.com/@cathcartufchurch7834/videos"
-                        target="_blank" rel="noopener">YouTube — Sunday services and recordings</a>
-                    </p>
+                <h4>Follow Us</h4>
+                <p>
+                    <a href="https://www.facebook.com/cathcartuf/" target="_blank" rel="noopener">Facebook —
+                        facebook.com/cathcartuf</a>
+                </p>
+                <p>
+                    <a href="https://www.youtube.com/@cathcartufchurch7834/videos" target="_blank"
+                        rel="noopener">YouTube — Sunday services and recordings</a>
+                </p>
 
-                    <h4>Prayer Requests</h4>
-                    <p>If you would like us to pray for you please use our dedicated
-                    <a href="prayer.html#prayer-request">prayer request form</a>.</p>
+                <h4>Prayer Requests</h4>
+                <p>If you would like us to pray for you please use our dedicated
+                    <a href="prayer.html#prayer-request">prayer request form</a>.
+                </p>
 
-                </div>
             </div>
+        </div>
 
         </div>
     </main>
@@ -160,17 +206,9 @@
         </div>
     </footer>
 
-    <script>
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                    window.netlifyIdentity.on("login", () => {
-                        document.location.href = "/admin/";
-                    });
-                }
-            });
-        }
-    </script>
+
 
 </body>
+
 </html>
+>
