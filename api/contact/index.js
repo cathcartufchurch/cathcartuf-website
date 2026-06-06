@@ -3,4 +3,5 @@ module.exports = async function (context, req) {
     status: 200,
     body: "Hello World"
   };
+  context.done();
 };
