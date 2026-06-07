@@ -7,20 +7,20 @@ app.http('contact', {
     handler: async (request, context) => {
         try {
             const body = await request.json();
-            const { name, email, subject, message, phone, wantZoom } = body;
+            const { name, email, message, phone, wantZoom } = body;
 
             if (!name || !email || !message) {
-                return {
+                return { 
                     status: 400,
-                    body: JSON.stringify({ error: "Missing required fields" })
+                    jsonBody: { error: "Missing required fields" }
                 };
             }
 
             const connectionString = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
             if (!connectionString) {
-                return {
+                return { 
                     status: 500,
-                    body: JSON.stringify({ error: "Connection string not found" })
+                    jsonBody: { error: "Connection string not found" }
                 };
             }
 
@@ -29,7 +29,7 @@ app.http('contact', {
             const emailMessage = {
                 senderAddress: "donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net",
                 content: {
-                    subject: `New Contact Form: ${message.substring(0, 50)}`,
+                    subject: `New Contact Form message from ${name}`,
                     plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
                 },
                 recipients: {
@@ -42,14 +42,14 @@ app.http('contact', {
 
             return {
                 status: 200,
-                body: JSON.stringify({ message: "Thank you for contacting us. We will get back to you soon." })
+                jsonBody: { message: "Thank you for contacting us. We will get back to you soon." }
             };
 
         } catch (error) {
             context.log.error("Error:", error.message);
             return {
                 status: 500,
-                body: JSON.stringify({ error: error.message })
+                jsonBody: { error: error.message }
             };
         }
     }
