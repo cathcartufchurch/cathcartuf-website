@@ -20,7 +20,7 @@ app.http('contact', {
             if (!connectionString) {
                 return {
                     status: 500,
-                    body: JSON.stringify({ error: "Server configuration error" })
+                    body: JSON.stringify({ error: "Connection string not found" })
                 };
             }
 
