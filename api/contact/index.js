@@ -1,7 +1,7 @@
 const { app } = require('@azure/functions');
 
 app.http('contact', {
-    methods: ['POST'],
+    methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
         return {
