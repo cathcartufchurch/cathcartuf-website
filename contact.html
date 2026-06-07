@@ -148,7 +148,7 @@
                             statusDiv.style.color = 'red';
                         }
                     } catch (error) {
-                        statusDiv.textContent = 'Error sending message. Please try again.';
+                        statusDiv.textContent = 'Error: ' + error.message;
                         statusDiv.style.color = 'red';
                         console.error('Error:', error);
                     }
