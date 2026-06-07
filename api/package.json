@@ -1,6 +1,7 @@
 {
   "name": "cathcartuf-api",
   "version": "1.0.0",
+  "main": "contact/index.js",
   "dependencies": {
     "@azure/functions": "^4.0.0",
     "@azure/communication-email": "^1.0.0"
