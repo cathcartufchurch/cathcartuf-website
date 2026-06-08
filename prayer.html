@@ -171,10 +171,14 @@
                             body: JSON.stringify(formData)
                         });
 
-                        const rawText = await response.text();
-                        statusDiv.textContent = 'Response: ' + rawText;
-                        statusDiv.style.color = 'red';
-                        return;
+                        let data;
+                        try {
+                            data = await response.json();
+                        } catch (e) {
+                            statusDiv.textContent = 'Server error: ' + response.status;
+                            statusDiv.style.color = 'red';
+                            return;
+                        }
 
                         if (response.ok) {
                             statusDiv.textContent = data.message;
@@ -185,7 +189,7 @@
                             statusDiv.style.color = 'red';
                         }
                     } catch (error) {
-                        statusDiv.textContent = 'Error submitting prayer request. Please try again.';
+                        statusDiv.textContent = 'Error: ' + error.message;
                         statusDiv.style.color = 'red';
                         console.error('Error:', error);
                     }
