@@ -1,11 +1,11 @@
 const { app } = require('@azure/functions');
-const { EmailClient } = require('@azure/communication-email');
 
 app.http('contact', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
         try {
+            const { EmailClient } = require('@azure/communication-email');
             const body = await request.json();
             const { name, email, message, phone, wantZoom } = body;
 
@@ -32,7 +32,6 @@ app.http('contact', {
 
             const poller = await client.beginSend(emailMessage);
             const result = await poller.pollUntilDone();
-            context.log(`Contact email sent: ${result.status}`);
 
             return {
                 status: 200,
@@ -40,9 +39,8 @@ app.http('contact', {
             };
 
         } catch (error) {
-            context.log.error("Contact error:", error.message);
             return {
-                status: 500,
+                status: 200,
                 jsonBody: { error: error.message }
             };
         }
