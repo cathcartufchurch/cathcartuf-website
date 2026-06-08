@@ -23,7 +23,7 @@ app.http('contact', {
             const emailMessage = {
                 senderAddress: "donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net",
                 content: {
-                    subject: `New Contact Form message from ${name}`,
+                    subject: `Cathcart UF: Contact request message from ${name}`,
                     plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
                 },
                 recipients: {
