@@ -137,7 +137,14 @@
                             body: JSON.stringify(formData)
                         });
 
-                        const data = await response.json();
+                        let data;
+                        try {
+                            data = await response.json();
+                        } catch (e) {
+                            statusDiv.textContent = 'Server error: ' + response.status;
+                            statusDiv.style.color = 'red';
+                            return;
+                        }
 
                         if (response.ok) {
                             statusDiv.textContent = 'Thank you! Your message has been sent. We will get back to you soon.';
