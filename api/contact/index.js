@@ -9,22 +9,14 @@ app.http('contact', {
             const body = await request.json();
             const { name, email, message, phone, wantZoom } = body;
 
-            if (!name || !email || !message) {
-                return { 
-                    status: 400,
-                    jsonBody: { error: "Missing required fields" }
-                };
-            }
-
             const connectionString = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
-
             const client = new EmailClient(connectionString);
 
             const emailMessage = {
                 senderAddress: "donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net",
                 content: {
-                    subject: `New Contact Form message from ${name}`,
-                    plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
+                    subject: `Test email`,
+                    plainText: `Test message`
                 },
                 recipients: {
                     to: [{ address: "services@cathcartuf.org.uk" }]
@@ -32,11 +24,10 @@ app.http('contact', {
             };
 
             const sendResult = await client.send(emailMessage);
-            context.log(`Email sent: ${sendResult.messageId}`);
 
             return {
                 status: 200,
-                jsonBody: { message: "Thank you for contacting us. We will get back to you soon." }
+                jsonBody: { message: "Email sent: " + sendResult.messageId }
             };
 
         } catch (error) {
