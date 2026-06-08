@@ -137,10 +137,23 @@
                             body: JSON.stringify(formData)
                         });
 
-                        const rawText = await response.text();
-                        statusDiv.textContent = 'Response: ' + rawText;
-                        statusDiv.style.color = 'red';
-                        return;
+                        let data;
+                        try {
+                            data = await response.json();
+                        } catch (e) {
+                            statusDiv.textContent = 'Server error: ' + response.status;
+                            statusDiv.style.color = 'red';
+                            return;
+                        }
+
+                        if (response.ok) {
+                            statusDiv.textContent = data.message;
+                            statusDiv.style.color = 'green';
+                            document.getElementById('contactForm').reset();
+                        } else {
+                            statusDiv.textContent = data.error || 'Failed to send message. Please try again.';
+                            statusDiv.style.color = 'red';
+                        }
 
                         if (response.ok) {
                             statusDiv.textContent = data.message;

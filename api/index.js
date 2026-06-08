@@ -40,7 +40,7 @@ app.http('contact', {
 
         } catch (error) {
             return {
-                status: 200,
+                status: 500,
                 jsonBody: { error: error.message }
             };
         }
