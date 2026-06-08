@@ -20,7 +20,7 @@ app.http('contact', {
             const client = new EmailClient(connectionString);
 
             const emailMessage = {
-                senderAddress: "Cathcart UF Website <donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net>",
+                senderAddress: "donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net",
                 content: {
                     subject: `Cathcart UF: Contact request message from ${name}`,
                     plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
