@@ -106,7 +106,7 @@
                     </form>
 
                     <p class="form-note">Fields marked <span class="required">*</span> are required. We aim to respond
-                        within 2–3 working days.</p>
+                        within 2-3 working days.</p>
 
                 </div>
             </div>
@@ -137,14 +137,10 @@
                             body: JSON.stringify(formData)
                         });
 
-                        let data;
-                        try {
-                            data = await response.json();
-                        } catch (e) {
-                            statusDiv.textContent = 'Server error: ' + response.status;
-                            statusDiv.style.color = 'red';
-                            return;
-                        }
+                        const rawText = await response.text();
+                        statusDiv.textContent = 'Response: ' + rawText;
+                        statusDiv.style.color = 'red';
+                        return;
 
                         if (response.ok) {
                             statusDiv.textContent = data.message;
