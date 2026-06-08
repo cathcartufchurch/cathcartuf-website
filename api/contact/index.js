@@ -1,14 +1,12 @@
 const { app } = require('@azure/functions');
-const { EmailClient } = require('@azure/communication-email');
 
 app.http('contact', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
         try {
-            const body = await request.json();
-            const { name, email, message, phone, wantZoom } = body;
-
+            const { EmailClient } = require('@azure/communication-email');
+            
             const connectionString = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
             const client = new EmailClient(connectionString);
 
@@ -23,18 +21,17 @@ app.http('contact', {
                 }
             };
 
-            const sendResult = await client.send(emailMessage);
+            await client.send(emailMessage);
 
             return {
                 status: 200,
-                jsonBody: { message: "Email sent: " + sendResult.messageId }
+                jsonBody: { message: "Sent!" }
             };
 
         } catch (error) {
-            context.log.error("Error:", error.message);
             return {
-                status: 500,
-                jsonBody: { error: error.message }
+                status: 200,
+                jsonBody: { message: "Caught error: " + error.message + " | Stack: " + error.stack }
             };
         }
     }
