@@ -21,17 +21,18 @@ app.http('contact', {
                 }
             };
 
-            await client.send(emailMessage);
+            const poller = await client.beginSend(emailMessage);
+            const result = await poller.pollUntilDone();
 
             return {
                 status: 200,
-                jsonBody: { message: "Sent!" }
+                jsonBody: { message: "Sent! Status: " + result.status }
             };
 
         } catch (error) {
             return {
                 status: 200,
-                jsonBody: { message: "Caught error: " + error.message + " | Stack: " + error.stack }
+                jsonBody: { message: "Caught error: " + error.message }
             };
         }
     }
