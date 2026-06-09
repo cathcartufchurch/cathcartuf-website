@@ -21,8 +21,7 @@ app.http('contact', {
             const client = new EmailClient(connectionString);
 
             const emailMessage = {
-                senderAddress: "DoNotReply@mail.cathcartuf.org.uk",
-                senderDisplayName: "Cathcart UF Website",
+                senderAddress: "Cathcart UF Website <DoNotReply@mail.cathcartuf.org.uk>",
                 content: {
                     subject: `Cathcart UF: Contact request message from ${name}`,
                     plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
