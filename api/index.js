@@ -70,7 +70,7 @@ app.http('prayer', {
             const connectionString = process.env.COMMUNICATION_SERVICES_CONNECTION_STRING;
             const client = new EmailClient(connectionString);
 
-            const privacyNote = isPrivate ? "[PRIVATE REQUEST]" : "[SHARED WITH PRAYER TEAM]";
+            const privacyNote = isPrivate ? "[PRIVATE REQUEST]" : "[SHARE WITH PRAYER TEAM]";
 
             let contactInfo = "";
             if (email) contactInfo += `\nEmail: ${email}`;
