@@ -21,7 +21,8 @@ app.http('contact', {
             const client = new EmailClient(connectionString);
 
             const emailMessage = {
-                senderAddress: "donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net",
+                senderAddress: "DoNotReply@mail.cathcartuf.org.uk",
+                senderDisplayName: "Cathcart Website Email",
                 content: {
                     subject: `Cathcart UF: Contact request message from ${name}`,
                     plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
@@ -78,7 +79,7 @@ app.http('prayer', {
             if (wantZoom) contactInfo += `\n\n[Requested Monday Zoom prayer meeting details]`;
 
             const emailMessage = {
-                senderAddress: "donotreply@mail.cathcartuf.org.uk",
+                senderAddress: "DoNotReply@mail.cathcartuf.org.uk",
                 senderDisplayName: "Cathcart Website Email",
 
                 content: {
