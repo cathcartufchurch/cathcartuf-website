@@ -128,7 +128,10 @@
                             <textarea id="prayerMessage" name="prayerRequest" required
                                 placeholder="Please share your prayer request here..." rows="6"></textarea>
                         </div>
-
+                        <div class="form-group form-check">
+                            <input type="checkbox" id="prayerPrivate" name="isPrivate" />
+                            <label for="prayerPrivate">Keep this request private (minister only)</label>
+                        </div>
                         <div class="form-group form-check">
                             <input type="checkbox" id="prayerZoom" name="wantZoom" />
                             <label for="prayerZoom">Please send me details of how to join the Monday
@@ -158,7 +161,7 @@
                         email: document.getElementById('prayerEmail').value || null,
                         phone: document.getElementById('prayerPhone').value || null,
                         prayerRequest: document.getElementById('prayerMessage').value,
-                        isPrivate: false,
+                        isPrivate: document.getElementById('prayerPrivate').checked,
                         wantZoom: document.getElementById('prayerZoom').checked
                     };
 
