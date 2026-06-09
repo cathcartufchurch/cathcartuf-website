@@ -22,7 +22,6 @@ app.http('contact', {
 
             const emailMessage = {
                 senderAddress: "DoNotReply@mail.cathcartuf.org.uk",
-                senderDisplayName: "Cathcart Website Email",
                 content: {
                     subject: `Cathcart UF: Contact request message from ${name}`,
                     plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
@@ -80,8 +79,6 @@ app.http('prayer', {
 
             const emailMessage = {
                 senderAddress: "DoNotReply@mail.cathcartuf.org.uk",
-                senderDisplayName: "Cathcart Website Email",
-
                 content: {
                     subject: `Cathcart UF: Prayer request from ${name} ${privacyNote}`,
                     plainText: `${privacyNote}\n\nName: ${name}${contactInfo}\n\nPrayer Request:\n${prayerRequest}`
