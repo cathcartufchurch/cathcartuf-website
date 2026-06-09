@@ -28,7 +28,7 @@ app.http('contact', {
                     plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
                 },
                 recipients: {
-                    to: [{ address: "services@cathcartuf.org.uk" }]
+                    to: [{ address: "tom.m.muir@gmail.com" }]
                 }
             };
             const poller = await client.beginSend(emailMessage);
