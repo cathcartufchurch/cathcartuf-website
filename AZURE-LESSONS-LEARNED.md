@@ -284,23 +284,98 @@ method names from older versions or other SDKs.
 
 **Problem:**
 Azure Communication Services does not support display names in the `senderAddress`
-field using the standard email format `Name <email@domain.com>`.
+field using the standard email format `Name <email@domain.com>`. The `senderDisplayName`
+field is also not supported in `@azure/communication-email` v1.0.0 — it is silently
+ignored.
 
 **Symptom:**
+Inline display name format causes:
 ```
 Request body validation error. See property 'senderAddress'
 ```
+`senderDisplayName` as a separate field causes no error but has no effect — the From
+field in the received email shows only the email address.
 
 **Fix:**
-Use the plain email address only:
+Use the plain email address only, with a meaningful local part (e.g. `DoNotReply`
+with capital letters as configured in the domain settings):
+
+```javascript
+senderAddress: "DoNotReply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net"
+```
+
+**Lesson:**
+Azure Communication Services `senderAddress` must be a plain email address with
+no display name formatting. `senderDisplayName` is not supported in v1.0.0.
+The capitalisation of the local part (before the @) must match exactly what was
+configured when the sending domain was set up.
+
+---
+
+## Issue 11 — top-level require Causes Silent Function Crashes
+
+**Problem:**
+Placing `require('@azure/communication-email')` at the top of `api/index.js` (outside
+the handler function) caused the entire function to crash on module load with an empty
+response body — before the handler even ran, so the try/catch never fired.
+
+**Symptom:**
+```
+Response: (empty)
+```
+Even a Hello World function returned empty when the top-level require was present.
+
+**Fix:**
+Move `require('@azure/communication-email')` inside the handler function:
+
+```javascript
+app.http('contact', {
+    methods: ['GET', 'POST'],
+    authLevel: 'anonymous',
+    handler: async (request, context) => {
+        try {
+            const { EmailClient } = require('@azure/communication-email');
+            // ... rest of handler
+        }
+    }
+});
+```
+
+**Lesson:**
+Always place `require('@azure/communication-email')` inside the handler function,
+not at the top of the file. Top-level requires cause silent failures with empty
+500 responses.
+
+---
+
+## Issue 12 — Ionos Rejecting Emails from Its Own Subdomain
+
+**Problem:**
+When using `mail.cathcartuf.org.uk` as the sending domain (a subdomain of the Ionos-hosted
+`cathcartuf.org.uk`), Ionos rejected all incoming emails silently — nothing arrived in
+the inbox or spam folder.
+
+**Symptom:**
+- Function reported success (`Succeeded`)
+- Gmail recipients received emails correctly
+- `@cathcartuf.org.uk` recipients received nothing — not even in spam
+
+**Cause:**
+Ionos applies same-domain spoofing protection — it blocks emails that appear to come
+from its own domain via a third-party sender (Azure Communication Services).
+
+**Fix:**
+Revert to the Azure-managed `azurecomm.net` sending domain, which Ionos does not block:
 
 ```javascript
 senderAddress: "donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net"
 ```
 
 **Lesson:**
-Azure Communication Services `senderAddress` must be a plain email address with
-no display name formatting.
+When your email is hosted by the same provider as your DNS (e.g. Ionos), do not use
+a subdomain of your main domain as the sending address for third-party email services.
+Use the Azure-managed `azurecomm.net` domain instead. This can be revisited if email
+is migrated to Microsoft 365 in future.
 
 ---
 
@@ -373,6 +448,9 @@ When adding a new Azure Function to this project:
 - [ ] Use `return` not `context.res` for responses
 - [ ] Use `client.beginSend()` + `pollUntilDone()` for email sending
 - [ ] Use plain email address only in `senderAddress` (no display names)
+- [ ] Place `require('@azure/communication-email')` inside the handler, not at top level
+- [ ] Use `azurecomm.net` sending domain — do not use a subdomain of your Ionos domain
+- [ ] Match capitalisation of `senderAddress` exactly to domain configuration
 - [ ] Store secrets as Azure Static Web App environment variables, never in code
 - [ ] Test with a Hello World response before adding email logic
 - [ ] During debugging, return status 200 from catch blocks to surface errors
