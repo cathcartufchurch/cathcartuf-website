@@ -21,13 +21,14 @@ app.http('contact', {
             const client = new EmailClient(connectionString);
 
             const emailMessage = {
-                senderAddress: "DoNotReply@mail.cathcartuf.org.uk",
-                senderDisplayName: "Cathcart UF Website", content: {
+                senderAddress: "donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net",
+                senderDisplayName: "Cathcart UF Website",
+                content: {
                     subject: `Cathcart UF: Contact request message from ${name}`,
                     plainText: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\nZoom: ${wantZoom ? 'Yes' : 'No'}\n\nMessage:\n${message}`
                 },
                 recipients: {
-                    to: [{ address: "tom.m.muir@gmail.com" }]
+                    to: [{ address: "services@cathcartuf.org.uk" }]
                 }
             };
             const poller = await client.beginSend(emailMessage);
