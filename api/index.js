@@ -11,7 +11,7 @@ app.http('contact', {
             const { name, email, message, phone, wantZoom } = body;
 
             if (!name || !email || !message) {
-                return { 
+                return {
                     status: 400,
                     jsonBody: { error: "Missing required fields" }
                 };
@@ -61,7 +61,7 @@ app.http('prayer', {
             const { name, email, phone, prayerRequest, isPrivate, wantZoom } = body;
 
             if (!name || !prayerRequest) {
-                return { 
+                return {
                     status: 400,
                     jsonBody: { error: "Missing required fields" }
                 };
@@ -78,7 +78,9 @@ app.http('prayer', {
             if (wantZoom) contactInfo += `\n\n[Requested Monday Zoom prayer meeting details]`;
 
             const emailMessage = {
-                senderAddress: "donotreply@953990c2-e815-4ff0-b9d1-45cfc48b94ba.azurecomm.net",
+                senderAddress: "donotreply@mail.cathcartuf.org.uk",
+                senderDisplayName: "Cathcart Website Email",
+
                 content: {
                     subject: `Cathcart UF: Prayer request from ${name} ${privacyNote}`,
                     plainText: `${privacyNote}\n\nName: ${name}${contactInfo}\n\nPrayer Request:\n${prayerRequest}`
