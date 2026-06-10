@@ -1,8 +1,11 @@
 module.exports = function(eleventyConfig) {
-    // Copy static assets as-is
     eleventyConfig.addPassthroughCopy("assets");
     eleventyConfig.addPassthroughCopy("admin");
     eleventyConfig.addPassthroughCopy("api");
+
+    // Ignore documentation files
+    eleventyConfig.ignores.add("AZURE-LESSONS-LEARNED.md");
+    eleventyConfig.ignores.add("README.md");
 
     return {
         dir: {
