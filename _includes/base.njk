@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }} - Cathcart United Free Church</title>
+    <meta name="description" content="{{ description }}" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
+</head>
+
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <img src="/assets/images/logo.png" alt="Cathcart United Free Church" class="logo" />
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="/" {% if activeNav == "home" %}class="active"{% endif %}>Home</a></li>
+                <li>
+                    <a href="/meetings/" {% if activeNav == "meetings" %}class="active"{% endif %}>Meetings</a>
+                    <ul>
+                        <li><a href="/meetings/">Meetings</a></li>
+                        <li><a href="/meetings/#sunday">Sunday at 11</a></li>
+                        <li><a href="/meetings/#midweek">Midweek at 10:30</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/prayer/" {% if activeNav == "prayer" %}class="active"{% endif %}>Prayer</a>
+                    <ul>
+                        <li><a href="/prayer/">Prayer</a></li>
+                        <li><a href="/prayer/#prayer-time">Prayer Time</a></li>
+                        <li><a href="/prayer/#prayer-request">Prayer Request</a></li>
+                    </ul>
+                </li>
+                <li>
+                   <!-- The main link stays active for the whole section -->
+                   <a href="/church-life/" {% if activeNav == "church-life" or activeNav == "off-the-cuf" or activeNav == "partnerships" or activeNav == "buddy-churches" %}class="active"{% endif %}>Church Life</a>
+                   <ul>
+                       <!-- The sub-links only light up on their specific page -->
+                       <li><a href="/church-life/" {% if activeNav == "church-life" %}class="active"{% endif %}>Church Life</a></li>
+                       <li><a href="/church-life/off-the-cuf/" {% if activeNav == "off-the-cuf" %}class="active"{% endif %}>Off the CUF</a></li>
+                       <li><a href="/church-life/partnerships/" {% if activeNav == "partnerships" %}class="active"{% endif %}>Partnerships</a></li>
+                       <li><a href="/church-life/#buddy-churches">Buddy Churches</a></li>
+                    </ul>
+                </li>
+                <li><a href="/events/" {% if activeNav == "events" %}class="active"{% endif %}>Events</a></li>
+                <li><a href="/sermons/" {% if activeNav == "sermons" %}class="active"{% endif %}>Sermons</a></li>
+                <li><a href="/find-us/" {% if activeNav == "find-us" %}class="active"{% endif %}>How to Find Us</a></li>
+                <li><a href="/contact/" {% if activeNav == "contact" %}class="active"{% endif %}>Contact Us</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        {{ content | safe }}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>
+                Cathcart United Free Church &bull; 7 Struan Road, Glasgow G44 3AT &bull;
+                <a href="/contact/">Contact Us</a> &bull;
+                <a href="https://www.facebook.com/cathcartuf/" target="_blank" rel="noopener">Facebook</a>
+            </p>
+            <p>Scottish Registered Charity No: SC001573</p>
+        </div>
+    </footer>
+
+</body>
+</html>
