@@ -51,13 +51,13 @@ layout: base.njk
             {% if item.details %}
             {{ item.details | markdown | safe }}
             {% endif %}
-{% if item.link %}
-    {% if "http" in item.link %}
-        <a href="{{ item.link }}" class="section-link" target="_blank" rel="noopener">{{ item.linkText or "Find out more" }} →</a>
-    {% else %}
-        <a href="{{ item.link }}" class="section-link">{{ item.linkText or "Find out more" }} →</a>
-    {% endif %}
-{% endif %}
+            {% if item.link %}
+                {% if "http" in item.link %}
+                    <a href="{{ item.link }}" class="section-link" target="_blank" rel="noopener">{{ item.linkText or "Find out more" }} →</a>
+                {% else %}
+                    <a href="{{ item.link }}" class="section-link">{{ item.linkText or "Find out more" }} →</a>
+                {% endif %}
+            {% endif %}
         </div>
     </div>
     {% endfor %}
