@@ -113,7 +113,7 @@ module.exports = function (eleventyConfig) {
         const fs = require("fs");
         const yaml = require("js-yaml");
         const path = require("path");
-        const dir = "./_data/news";
+        const dir = path.join(__dirname, "_data/news");
         if (!fs.existsSync(dir)) return [];
         return fs.readdirSync(dir)
             .filter(file => file.endsWith(".yaml"))
@@ -127,7 +127,7 @@ module.exports = function (eleventyConfig) {
         const fs = require("fs");
         const yaml = require("js-yaml");
         const path = require("path");
-        const dir = "./_data/events";
+        const dir = path.join(__dirname, "_data/events");
         if (!fs.existsSync(dir)) return [];
         return fs.readdirSync(dir)
             .filter(file => file.endsWith(".yaml"))
@@ -141,7 +141,7 @@ module.exports = function (eleventyConfig) {
         const fs = require("fs");
         const yaml = require("js-yaml");
         const path = require("path");
-        const dir = "./_data/sermons";
+        const dir = path.join(__dirname, "_data/sermons");
         if (!fs.existsSync(dir)) return [];
         return fs.readdirSync(dir)
             .filter(file => file.endsWith(".yaml"))
