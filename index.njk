@@ -5,164 +5,151 @@ activeNav: home
 layout: base.njk
 ---
 
-    <!-- HERO IMAGE WITH STRAPLINE -->
-    <div class="hero">
-        <div class="hero-placeholder">
-            <img src="/assets/images/church-front-narrow-scaled.jpg" alt="Front of Cathcart UF Church" />
-        </div>
-        <div class="hero-strapline">
-            Growing together in Christ.<br />
-            Serving the community.<br />
-            Sharing Jesus' love.
-        </div>
+<!-- HERO IMAGE WITH STRAPLINE -->
+<div class="hero">
+    <div class="hero-placeholder">
+        <img src="/assets/images/church-front-narrow-scaled.jpg" alt="Front of Cathcart UF Church" />
+    </div>
+    <div class="hero-strapline">
+        Growing together in Christ.<br />
+        Serving the community.<br />
+        Sharing Jesus' love.
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- MINISTRY OPPORTUNITY NOTICE -->
+    <div class="notice-card">
+        <h3>Ministry Opportunity at Cathcart UF</h3>
+        <p>We are seeking a minister to serve on a full-time or part-time basis who will help us
+            in our aims of "Growing together in Christ, serving the community, sharing Jesus' love"
+            through worship and preaching, pastoral care and working with us in the local community.</p>
+        <p><a href="/ministry-opportunity/" class="section-link">Find out more →</a></p>
     </div>
 
-        <div class="container">
-            <!-- MINISTRY OPPORTUNITY NOTICE -->
-            <div class="notice-card">
-                <h3>Ministry Opportunity at Cathcart UF</h3>
-                <p>We are seeking a minister to serve on a full-time or part-time basis who will help us
-                    in our aims of "Growing together in Christ, serving the community, sharing Jesus' love"
-                    through worship and preaching, pastoral care and working with us in the local community.</p>
-                <p><a href="/ministry-opportunity" class="section-link">Find out more →</a></p>
+    <!-- LATEST NEWS -->
+    {% set newsItems = collections.news | activeNews %}
+    {% if newsItems and newsItems.length > 0 %}
+    <h2>Latest News</h2>
+    {% for item in newsItems %}
+    <div class="news-section">
+        <div class="news-item">
+            {% if item.image %}
+            <div class="card-content-with-image">
+                <h3>{{ item.title }}</h3>
+                <div class="card-image">
+                    <img src="{{ item.image }}" 
+                    alt="{{ item.imageAlt }}" 
+                    class="news-image-{{ item.imageSize or 'medium' }}" />
+                </div>
             </div>
+            {% else %}
+            <h3>{{ item.title }}</h3>
+            {% endif %}
+            <p>{{ item.summary }}</p>
+            {% if item.details %}
+            {{ item.details | markdown | safe }}
+            {% endif %}
+{% if item.link %}
+    {% if "http" in item.link %}
+        <a href="{{ item.link }}" class="section-link" target="_blank" rel="noopener">{{ item.linkText or "Find out more" }} →</a>
+    {% else %}
+        <a href="{{ item.link }}" class="section-link">{{ item.linkText or "Find out more" }} →</a>
+    {% endif %}
+{% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
 
-            <!-- LATEST NEWS -->
-            <h2>Latest News</h2>
-
-            <div class="news-section">
-                <div class="news-item">
-                    <h3>Cathcart Churches Renew Their Covenant</h3>
-                    <p>On 1st February, Cathcart Church of Scotland and Cathcart United Free Church renewed their
-                        covenant partnership which has been in place since 2011. This renewed commitment marks an
-                        exciting step forward in our shared ministry in the Cathcart community.
-                        <a href="/partnerships" class="section-link">Find out more →</a>
+    <!-- COMING UP -->
+    {% set upcomingEvents = collections.events | futureEvents | limit(2) %}
+    {% if upcomingEvents and upcomingEvents.length > 0 %}
+    <h2>Coming Up</h2>
+    <div class="coming-up">
+        <div class="coming-up-list">
+            {% for event in upcomingEvents %}
+            <div class="coming-up-card">
+                <div class="coming-up-date">
+                    <strong>{{ event.date | dateDay }}</strong>
+                    {{ event.date | dateMonth }}
+                </div>
+                <div class="coming-up-info">
+                    <h4>{{ event.title }}</h4>
+                    <p>{{ event.time }}
+                        {% if event.location %} at {{ event.location }}{% endif %}
+                        {% if event.description %} &bull; {{ event.description }}{% endif %}
                     </p>
                 </div>
-
             </div>
-
-            <div class="news-section">
-                <div class="news-item">
-
-                    <div class="card-content-with-image">
-                        <h3>Alpha Course</h3>
-                        <div class="card-image" style="width: 25px;">
-                            <img src="/assets/images/alphalogored.webp"
-                                alt="Red Alpha Logo - a questionmark at a slight angle" />
-                        </div>
-                    </div>
-                    <p>A new Alpha coures is starting in September at Cathcart Church of Scotland.</p>
-                    <strong>Dates</strong>
-                    <ul>
-                        <li>Starts: 3rd September</li>
-                        <li>Ends: 3rd December</li>
-                        <li>Holy Spirit Day: 7th November</li>
-                    </ul>
-                    <p>To learn more about Alpha</a> visit their web site. <a href="https://www.alpha.org"
-                            target="_blank" rel="noopener" class="section-link">Find out more →</a></p>
-                </div>
-            </div>
-
-            <!-- COMING UP -->
-            <h2>Coming Up</h2>
-
-            <div class="coming-up">
-                <div class="coming-up-list">
-
-
-                    <div class="coming-up-card">
-                        <div class="coming-up-date">
-                            <strong>6</strong>
-                            Jun
-                        </div>
-                        <div class="coming-up-info">
-                            <h4>Prayer Breakfast</h4>
-                            <p>8:30-10am at Cathcart United Free Church &bull; Joint with Cathcart Church of Scotland
-                                and Cathcart Baptist</p>
-                            <br>
-                            <h4>Off the CUF</h4>
-                            <p>10:30 am at Cathcart United Free Church &bull; Food, Friendship and Faith chats</p>
-                        </div>
-
-                    </div>
-                    <div class="coming-up-card">
-                        <div class="coming-up-date">
-                            <strong>28</strong>
-                            June
-                        </div>
-                        <div class="coming-up-info">
-                            <h4>Love Your Church — Sunday Service</h4>
-                            <p>11am at Cathcart United Free Church &bull; Continuing our series in Acts 1-12 and the
-                                book Love Your
-                                Church</p>
-                        </div>
-                    </div>
-                </div>
-                <a href="/events" class="more-events-link">See all upcoming events →</a>
-            </div>
-
-            <!-- ABOUT / WHO WE ARE -->
-            <h2>Welcome to Cathcart United Free Church</h2>
-
-            <p>We are a small fellowship in Cathcart — a group of ordinary people who come together to
-                share faith and hope in Jesus. With the help of God's Spirit, we seek to share the Good News
-                of Jesus Christ through worship, prayer, caring and teaching within our church family and through
-                outreach into our community and beyond.</p>
-
-            <p>We are always delighted to welcome other folk — whether it be online or in-person, visiting
-                or staying for a while. <a href="/contact">Drop us a message</a> if you would like to
-                find out more or just want to have a wee chat!</p>
-
-            <!-- SCRIPTURE QUOTE -->
-            <div class="scripture-card">
-                <p><em>"There is neither Jew nor Greek, there is neither slave nor free, there is no male
-                        and female, for you are all one in Christ Jesus."</em></p>
-                <p class="scripture-ref">Galatians 3:28</p>
-            </div>
-
-            <!-- FEATURE PANELS -->
-            <div class="feature-panels">
-
-                <div class="feature-panel">
-                    <h3>Our Meetings</h3>
-                    <p><strong>Sundays 11–12:15pm</strong><br />
-                        In-person, Zoom &amp; YouTube Livestream.<br />
-                        Tea and coffee after the service.</p>
-                    <p><strong>Wednesdays 10:30–11:15am</strong><br />
-                        Time for Reflection — in-person.</p>
-                    <div class="photo-row">
-                        <div class="photo-placeholder">
-                            <img src="/assets/images/logo.png" alt="Midweek gathering at Cathcart United Free Church" />
-                        </div>
-                    </div>
-                    <a href="/meetings" class="section-link">Find out more →</a>
-                </div>
-
-                <div class="feature-panel">
-                    <h3>Prayer</h3>
-                    <p>We would love to pray for you. Send us your prayer request and we will
-                        hold you before God in prayer.</p>
-                    <a href="/prayer#prayer-request">Send a prayer request</a>
-                </div>
-
-                <div class="feature-panel">
-                    <h3>Any Questions?</h3>
-                    <p>We would love to hear from you — whether you have a question, want to
-                        find out more, or just want to say hello.</p>
-                    <a href="/contact">Contact us</a>
-                </div>
-
-            </div>
-
-            <!-- DENOMINATION -->
-            <div class="denomination-strip">
-                <p>Cathcart United Free Church belongs to the <a href="https://ufcos.org.uk" target="_blank"
-                        rel="noopener">United Free Church of Scotland</a>, sharing a commitment to Reformed evangelical
-                    faith, Presbyterian governance, and warm fellowship.</p>
-                <p>We invite you to explore the denomination's wider mission, ministries, and community work across the
-                    country. <a href="https://ufcos.org.uk" target="_blank" rel="noopener" class="section-link">Find out
-                        more →</a></p>
-            </div>
-
+            {% endfor %}
         </div>
+        <a href="/events/" class="more-events-link">See all upcoming events →</a>
+    </div>
+    {% endif %}
+
+    <!-- ABOUT / WHO WE ARE -->
+    <h2>Welcome to Cathcart United Free Church</h2>
+
+    <p>We are a small fellowship in Cathcart — a group of ordinary people who come together to
+        share faith and hope in Jesus. With the help of God's Spirit, we seek to share the Good News
+        of Jesus Christ through worship, prayer, caring and teaching within our church family and through
+        outreach into our community and beyond.</p>
+
+    <p>We are always delighted to welcome other folk — whether it be online or in-person, visiting
+        or staying for a while. <a href="/contact/">Drop us a message</a> if you would like to
+        find out more or just want to have a wee chat!</p>
+
+    <!-- SCRIPTURE QUOTE -->
+    <div class="scripture-card">
+        <p><em>"There is neither Jew nor Greek, there is neither slave nor free, there is no male
+                and female, for you are all one in Christ Jesus."</em></p>
+        <p class="scripture-ref">Galatians 3:28</p>
+    </div>
+
+    <!-- FEATURE PANELS -->
+    <div class="feature-panels">
+
+        <div class="feature-panel">
+            <h3>Our Meetings</h3>
+            <p><strong>Sundays 11–12:15pm</strong><br />
+                In-person, Zoom &amp; YouTube Livestream.<br />
+                Tea and coffee after the service.</p>
+            <p><strong>Wednesdays 10:30–11:15am</strong><br />
+                Time for Reflection — in-person.</p>
+            <div class="photo-row">
+                <div class="photo-placeholder">
+                    <img src="/assets/images/logo.png" alt="Midweek gathering at Cathcart United Free Church" />
+                </div>
+            </div>
+            <a href="/meetings/" class="section-link">Find out more →</a>
+        </div>
+
+        <div class="feature-panel">
+            <h3>Prayer</h3>
+            <p>We would love to pray for you. Send us your prayer request and we will
+                hold you before God in prayer.</p>
+            <a href="/prayer/#prayer-request">Send a prayer request</a>
+        </div>
+
+        <div class="feature-panel">
+            <h3>Any Questions?</h3>
+            <p>We would love to hear from you — whether you have a question, want to
+                find out more, or just want to say hello.</p>
+            <a href="/contact/">Contact us</a>
+        </div>
+
+    </div>
+
+    <!-- DENOMINATION -->
+    <div class="denomination-strip">
+        <p>Cathcart United Free Church belongs to the <a href="https://ufcos.org.uk" target="_blank"
+                rel="noopener">United Free Church of Scotland</a>, sharing a commitment to Reformed evangelical
+            faith, Presbyterian governance, and warm fellowship.</p>
+        <p>We invite you to explore the denomination's wider mission, ministries, and community work across the
+            country. <a href="https://ufcos.org.uk" target="_blank" rel="noopener" class="section-link">Find out
+                more →</a></p>
+    </div>
+
+</div>

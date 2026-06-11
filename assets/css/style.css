@@ -469,7 +469,6 @@ ul li, ol li {
     border-radius: 4px;
 }
 
-
 /* ===================================================
    10. HOME PAGE — COMING UP
    Compact preview of the next 1-2 upcoming events.
@@ -599,7 +598,25 @@ ul li, ol li {
     font-size: 0.95em;
 }
 
+.news-image-small {
+    max-width: 60px;
+    height: auto;
+}
 
+.news-image-medium {
+    max-width: 180px;
+    height: auto;
+}
+
+.news-image-large {
+    max-width: 320px;
+    height: auto;
+}
+
+.news-image-full {
+    max-width: 100%;
+    height: auto;
+}
 /* ===================================================
    10c. HOME PAGE — FEATURE PANELS
    Three equal-width panels highlighting Meetings,
