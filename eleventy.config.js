@@ -1,5 +1,18 @@
 const { marked } = require("marked");
 
+// Helper to parse time strings like "8:30am", "10:30am", "11am" into minutes
+function parseTime(timeStr) {
+    if (!timeStr) return 0;
+    const match = timeStr.match(/(\d+)(?::(\d+))?(am|pm)?/i);
+    if (!match) return 0;
+    let hours = parseInt(match[1]);
+    const minutes = parseInt(match[2] || 0);
+    const period = (match[3] || "am").toLowerCase();
+    if (period === "pm" && hours !== 12) hours += 12;
+    if (period === "am" && hours === 12) hours = 0;
+    return hours * 60 + minutes;
+}
+
 module.exports = function (eleventyConfig) {
 
     // ─── Passthrough Copies ────────────────────────────────────────
@@ -31,6 +44,11 @@ module.exports = function (eleventyConfig) {
     // Short month only e.g. "Jun"
     eleventyConfig.addFilter("dateMonth", function (date) {
         return new Date(date).toLocaleDateString("en-GB", { month: "short" });
+    });
+
+    // Month and year e.g. "June 2026"
+    eleventyConfig.addFilter("dateMonthYear", function (date) {
+        return new Date(date).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
     });
 
     // ─── Utility Filters ───────────────────────────────────────────
@@ -77,9 +95,12 @@ module.exports = function (eleventyConfig) {
                     : new Date(event.date);
                 return relevantDate >= today;
             })
-            .sort((a, b) => new Date(a.date) - new Date(b.date));
+            .sort((a, b) => {
+                const dateCompare = new Date(a.date) - new Date(b.date);
+                if (dateCompare !== 0) return dateCompare;
+                return parseTime(a.startTime) - parseTime(b.startTime);
+            });
     });
-
     // Current events - future + until end of following month (for events page)
     eleventyConfig.addFilter("currentEvents", function (events) {
         if (!events) return [];
@@ -92,7 +113,6 @@ module.exports = function (eleventyConfig) {
                     ? new Date(event.endDate)
                     : new Date(event.date);
 
-                // Keep until end of following month
                 const hideAfter = new Date(relevantDate);
                 hideAfter.setMonth(hideAfter.getMonth() + 1);
                 hideAfter.setDate(new Date(
@@ -103,9 +123,12 @@ module.exports = function (eleventyConfig) {
 
                 return hideAfter >= today;
             })
-            .sort((a, b) => new Date(a.date) - new Date(b.date));
+            .sort((a, b) => {
+                const dateCompare = new Date(a.date) - new Date(b.date);
+                if (dateCompare !== 0) return dateCompare;
+                return parseTime(a.startTime) - parseTime(b.startTime);
+            });
     });
-
     // ─── Collections ───────────────────────────────────────────────
 
     // News collection

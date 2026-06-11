@@ -76,8 +76,11 @@ layout: base.njk
                     {{ event.date | dateMonth }}
                 </div>
                 <div class="coming-up-info">
-                    <h4>{{ event.title }}</h4>
-                    <p>{{ event.time }}
+                   <h4>{{ event.title }}</h4>
+                   <p>
+                        {% if event.startTime %}
+                           {{ event.startTime }}{% if event.endTime %}–{{ event.endTime }}{% endif %}
+                        {% endif %}
                         {% if event.location %} at {{ event.location }}{% endif %}
                         {% if event.description %} &bull; {{ event.description }}{% endif %}
                     </p>
