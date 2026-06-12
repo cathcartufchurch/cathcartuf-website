@@ -456,3 +456,249 @@ When adding a new Azure Function to this project:
 - [ ] During debugging, return status 200 from catch blocks to surface errors
 - [ ] Restore status 500 for error responses before going to production
 - [ ] No `function.json` files — v4 doesn't use them
+
+---
+
+## Eleventy Setup — Issues and Lessons Learned
+
+---
+
+## Issue 13 — Oryx Double-Building Eleventy
+
+**Problem:**
+When Eleventy is added to the project, Azure's Oryx build system detects the `package.json`
+and automatically runs `npm run build`, which outputs to `_site/`. Azure then looks for the
+app inside `_site/_site/` — a double-nested folder that doesn't exist.
+
+**Symptom:**
+```
+Try to validate location at: '.../app/_site'.
+The app build failed to produce artifact folder: '_site/'.
+```
+
+**Fix:**
+Add manual build steps to the workflow and skip Oryx with `skip_app_build: true`:
+
+```yaml
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build with Eleventy
+        run: npm run build
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_... }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "_site"
+          api_location: "api"
+          output_location: ""
+          skip_app_build: true
+```
+
+Key settings:
+- `app_location: "_site"` — points Azure at the pre-built output
+- `output_location: ""` — no further build needed
+- `skip_app_build: true` — prevents Oryx from running again
+
+**Lesson:**
+When using Eleventy with Azure Static Web Apps, always build manually in the workflow
+and skip Oryx. Never let Oryx and your manual build run together — they will conflict.
+
+---
+
+## Issue 14 — Eleventy Processing Documentation Files
+
+**Problem:**
+Eleventy tried to process `AZURE-LESSONS-LEARNED.md` as a template and failed because
+the file contains `${{ }}` syntax from GitHub Actions workflow examples.
+
+**Symptom:**
+```
+[11ty] Having trouble rendering liquid template ./AZURE-LESSONS-LEARNED.md
+expected "|" before filter
+```
+
+**Fix:**
+Add documentation files to Eleventy's ignore list in `eleventy.config.js`:
+
+```javascript
+eleventyConfig.ignores.add("AZURE-LESSONS-LEARNED.md");
+eleventyConfig.ignores.add("README.md");
+eleventyConfig.ignores.add("_backups/**");
+```
+
+**Lesson:**
+Any markdown file at the repo root will be processed by Eleventy unless explicitly
+ignored. Always add documentation and backup files to the ignores list.
+
+---
+
+## Issue 15 — Windows Folder Name Case Sensitivity
+
+**Problem:**
+Windows is case-insensitive and capitalises folder names when created (e.g. `News`,
+`Events`, `Sermons`). GitHub Actions runs on Linux which is case-sensitive. The
+collection paths in `eleventy.config.js` use lowercase (`_data/news`) which don't
+match the capitalised folders on Linux, so collections return empty arrays.
+
+**Symptom:**
+- Collections work correctly on `localhost` (Windows)
+- Collections return empty on the live site (Linux)
+- HTML comments present in page source but no content between them
+
+**Fix:**
+Always create folders in lowercase. If a folder was created with capitals on Windows,
+rename it via the GitHub web interface (which runs on Linux and handles case renames
+correctly). The two-step rename trick on Windows:
+1. Rename `News` → `news-temp`
+2. Rename `news-temp` → `news`
+
+Or use `git config core.ignorecase false` and `git rm -r --cached` to force Git to
+recognise the case change.
+
+**Lesson:**
+Always verify folder names are lowercase in GitHub after creating them on Windows.
+This applies to all folders referenced by code — `_data/news/`, `_data/events/`,
+`_data/sermons/` etc. Linux and Windows treat `News` and `news` as different folders.
+
+---
+
+## Issue 16 — Eleventy Collections Not Finding YAML Files
+
+**Problem:**
+Using relative paths (`"./_data/news"`) in collection definitions worked locally but
+failed on GitHub Actions because the working directory resolves differently.
+
+**Fix:**
+Use `__dirname` for reliable path resolution regardless of where the build runs:
+
+```javascript
+eleventyConfig.addCollection("news", function () {
+    const fs = require("fs");
+    const yaml = require("js-yaml");
+    const path = require("path");
+    const dir = path.join(__dirname, "_data/news");
+    if (!fs.existsSync(dir)) return [];
+    return fs.readdirSync(dir)
+        .filter(file => file.endsWith(".yaml"))
+        .map(file => yaml.load(
+            fs.readFileSync(path.join(dir, file), "utf8")
+        ));
+});
+```
+
+**Lesson:**
+Always use `path.join(__dirname, ...)` for file paths in `eleventy.config.js`.
+This ensures paths resolve correctly regardless of the build environment.
+
+---
+
+## Issue 17 — Sorting Events by Human-Readable Time Strings
+
+**Problem:**
+Event times are stored as human-readable strings (`"8:30am"`, `"10:30am"`) for
+display purposes. Sorting these alphabetically fails because `"10"` sorts before
+`"8"` lexicographically.
+
+**Fix:**
+Add a `parseTime` helper function that converts human-readable time strings to
+minutes for reliable numeric sorting:
+
+```javascript
+function parseTime(timeStr) {
+    if (!timeStr) return 0;
+    const match = timeStr.match(/(\d+)(?::(\d+))?(am|pm)?/i);
+    if (!match) return 0;
+    let hours = parseInt(match[1]);
+    const minutes = parseInt(match[2] || 0);
+    const period = (match[3] || "am").toLowerCase();
+    if (period === "pm" && hours !== 12) hours += 12;
+    if (period === "am" && hours === 12) hours = 0;
+    return hours * 60 + minutes;
+}
+```
+
+Use separate `startTime` and `endTime` fields in YAML (not a combined `time` field)
+for clean display and reliable sorting:
+
+```yaml
+startTime: "8:30am"
+endTime: "10am"
+```
+
+**Lesson:**
+Never try to sort human-readable time strings alphabetically. Always store times in
+a machine-parseable format for sorting, or use a helper function to parse them first.
+
+---
+
+## Correct Final Structure (Eleventy)
+
+```
+repo-root/
+├── _data/
+│   ├── events/         ← one YAML file per event (lowercase!)
+│   ├── news/           ← one YAML file per news item (lowercase!)
+│   └── sermons/        ← one YAML file per sermon (lowercase!)
+├── _includes/
+│   └── base.njk        ← single nav/header/footer template
+├── _site/              ← Eleventy build output (gitignored)
+├── _backups/           ← original HTML files (gitignored by Eleventy)
+├── api/
+│   ├── index.js        ← all Azure Functions
+│   ├── host.json
+│   └── package.json
+├── assets/             ← CSS, images, fonts
+├── admin/              ← CMS admin interface
+├── contact/
+│   └── index.njk
+├── events/
+│   └── index.njk
+├── ... other page folders
+├── eleventy.config.js
+├── package.json        ← root package.json with Eleventy as devDependency
+├── package-lock.json
+└── .gitignore
+```
+
+**`.gitignore`:**
+```
+node_modules/
+_site/
+```
+
+**Root `package.json` scripts:**
+```json
+"scripts": {
+    "build": "eleventy",
+    "build:azure": "eleventy"
+}
+```
+
+---
+
+## Quick Reference Checklist for Eleventy Setup
+
+- [ ] Install Eleventy as devDependency: `npm install --save-dev @11ty/eleventy`
+- [ ] Install js-yaml: `npm install --save-dev js-yaml`
+- [ ] Install marked: `npm install --save-dev marked`
+- [ ] Add `node_modules/` and `_site/` to `.gitignore`
+- [ ] Create `eleventy.config.js` with passthrough copies, ignores, filters and collections
+- [ ] Add documentation files to Eleventy ignores list
+- [ ] Create `_includes/base.njk` with nav/header/footer template
+- [ ] Use `__dirname` for all file paths in collections
+- [ ] Always create `_data/` subfolders in lowercase
+- [ ] Verify folder names are lowercase in GitHub after creating on Windows
+- [ ] Use `skip_app_build: true` in workflow with `app_location: "_site"`
+- [ ] Use `startTime`/`endTime` fields (not `time`) for reliable event sorting
+- [ ] Test locally with `npx eleventy --serve` before pushing
