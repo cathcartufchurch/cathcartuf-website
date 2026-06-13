@@ -1,0 +1,23 @@
+title: "Alpha Course"
+date: 2026-09-03
+endDate: 2026-12-03
+startTime:
+endTime:
+location: "Cathcart Church of Scotland"
+description: ""
+image: "/assets/images/alphalogored.webp"
+imageAlt: "Red Alpha Logo - a question mark at a slight angle"
+imageSize: "small"
+imagePosition: "title"
+details: |
+  A new Alpha course is starting in September at Cathcart Church of Scotland.
+
+  **Dates**
+  - Starts: Thursday 3rd September
+  - Ends: Thursday 3rd December
+  - Holy Spirit Day: Saturday 7th November
+  
+  To learn more about Alpha visit their web site.
+link: "https://www.alpha.org"
+linkText: 
+active: true

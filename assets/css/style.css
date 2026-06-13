@@ -13,7 +13,9 @@
  7. NOTICE CARD        — .notice-card (ministry opportunity / announcements)
  8. SECTION CARDS      — .section-card, .section-card-header, .section-card-body
  9. PHOTO ROW          — .photo-row, .photo-placeholder
- 9b.CARD WITH IMAGE    — .card-content-with-image, .card-text, .card-image
+ 9a.CARD WITH IMAGE    — .card-content-with-image, .card-text, .card-image
+ 9b.CONTENT IMAGES    — .content-image-small, .content-image-medium,
+                         .content-image-large, .content-image-full
 10. HOME — COMING UP   — .coming-up, .coming-up-list, .coming-up-card, .coming-up-date, .coming-up-info
 10b.HOME — LATEST NEWS — .news-section, .news-item
 10c.HOME — FEATURES    — .feature-panels, .feature-panel
@@ -29,6 +31,9 @@
 17. SOCIAL LINKS       — .social-links, .social-link
 18. BUDDY LIST         — .buddy-list
 19. EVENTS             — .event-month, .event-list, .event-card, .event-meta
+19a.EVENTS IMAGE       — .event-image-top, .event-image-right, .event-card::after,
+                         .event-title-with-image, .event-title-with-image h3,
+                         .event-title-with-image .card-image
 20. FOOTER             — footer
 21. RESPONSIVE         — @media max-width 600px
 */
@@ -159,7 +164,7 @@ nav ul li a.active {
     text-decoration: none;
 }
 
-nav ul li:hover > a {
+nav ul li:hover>a {
     background-color: #1a4b7a;
 }
 
@@ -182,9 +187,9 @@ nav ul li ul {
     top: 100%;
     left: 0;
     background-color: #1e4f85;
-    border-left: 3px solid rgba(255,255,255,0.3);
+    border-left: 3px solid rgba(255, 255, 255, 0.3);
     min-width: 180px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     flex-direction: column;
 }
 
@@ -195,7 +200,7 @@ nav ul li:hover ul {
 nav ul li ul li a {
     padding: 10px 22px;
     font-size: 0.85em;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 nav ul li ul li a:hover {
@@ -248,7 +253,7 @@ nav ul li ul li a.active {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
     color: #ffffff;
     text-align: center;
     padding: 50px 20px 50px;
@@ -273,7 +278,9 @@ main {
     padding: 40px 0;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
     color: #1a4b7a;
     margin-bottom: 15px;
     font-weight: normal;
@@ -303,11 +310,13 @@ p {
     margin-bottom: 15px;
 }
 
-ul, ol {
+ul,
+ol {
     margin: 0 0 15px 25px;
 }
 
-ul li, ol li {
+ul li,
+ol li {
     margin-bottom: 5px;
 }
 
@@ -439,9 +448,8 @@ ul li, ol li {
     opacity: 0.75;
 }
 
-
 /* ===================================================
-   9b. CARD WITH IMAGE
+   9a. CARD WITH IMAGE
    Places descriptive text alongside a single image
    inside a section card body. .card-text takes all
    available space via flex: 1. .card-image stays its
@@ -598,25 +606,43 @@ ul li, ol li {
     font-size: 0.95em;
 }
 
-.news-image-small {
-    max-width: 60px;
+
+/* ===================================================
+   9b. CONTENT IMAGES
+   Shared image sizing classes used across news items,
+   event cards and any other content areas. Applied via
+   the imageSize field in YAML content files.
+   small  — logos and small icons (e.g. Alpha logo)
+   medium — illustrations and medium graphics
+   large  — photos and larger graphics (e.g. posters)
+   full   — spans full width of container
+   =================================================== */
+
+.content-image-small {
+    max-width: 80px;
     height: auto;
+    border-radius: 4px;
 }
 
-.news-image-medium {
+.content-image-medium {
     max-width: 180px;
     height: auto;
+    border-radius: 4px;
 }
 
-.news-image-large {
+.content-image-large {
     max-width: 320px;
     height: auto;
+    border-radius: 4px;
 }
 
-.news-image-full {
+.content-image-full {
     max-width: 100%;
     height: auto;
+    border-radius: 4px;
+    display: block;
 }
+
 /* ===================================================
    10c. HOME PAGE — FEATURE PANELS
    Three equal-width panels highlighting Meetings,
@@ -651,25 +677,25 @@ ul li, ol li {
 }
 
 .feature-panel p {
-    color: rgba(255,255,255,0.85);
+    color: rgba(255, 255, 255, 0.85);
     font-size: 0.9em;
     margin-bottom: 15px;
 }
 
 .feature-panel a {
     display: inline-block;
-    background-color: rgba(255,255,255,0.15);
+    background-color: rgba(255, 255, 255, 0.15);
     color: #ffffff;
     padding: 8px 16px;
     border-radius: 4px;
     font-family: Arial, sans-serif;
     font-size: 0.85em;
     text-decoration: none;
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .feature-panel a:hover {
-    background-color: rgba(255,255,255,0.3);
+    background-color: rgba(255, 255, 255, 0.3);
     text-decoration: none;
 }
 
@@ -771,9 +797,21 @@ ul li, ol li {
 }
 
 /* Colour modifiers for the three Off the CUF feature panels */
-.cuf-feature--food       { background-color: #a63d2f; } /* deep red     */
-.cuf-feature--friendship { background-color: #1a4b7a; } /* site navy    */
-.cuf-feature--faith      { background-color: #2e7d52; } /* forest green */
+.cuf-feature--food {
+    background-color: #a63d2f;
+}
+
+/* deep red     */
+.cuf-feature--friendship {
+    background-color: #1a4b7a;
+}
+
+/* site navy    */
+.cuf-feature--faith {
+    background-color: #2e7d52;
+}
+
+/* forest green */
 
 
 /* ===================================================
@@ -955,7 +993,7 @@ ul li, ol li {
 .form-group textarea:focus {
     outline: none;
     border-color: #1a4b7a;
-    box-shadow: 0 0 0 2px rgba(26,75,122,0.2);
+    box-shadow: 0 0 0 2px rgba(26, 75, 122, 0.2);
 }
 
 .form-check {
@@ -1121,18 +1159,70 @@ ul li, ol li {
     font-weight: bold;
 }
 
-.event-card img {
-    margin-top: 12px;
-    border-radius: 4px;
-    max-height: 200px;
-    width: auto;
-    display: block;
-}
-
 .event-card p:last-child {
     margin-bottom: 0;
 }
 
+
+/* ===================================================
+   19a. EVENTS IMAGES
+   Images can be placed within the event card using
+   the imagePosition field in YAML content files.
+   right  — floats image beside all event content
+            (good for posters and flyers)
+   title  — places image tight alongside the h3 heading
+            (good for logos like Alpha)
+   top    — full-width image above all content
+            (good for banner-style photos)
+   Image sizing is controlled by the content-image-*
+   classes defined in section 9b above.
+   =================================================== */
+
+/* Image above everything */
+.event-image-top {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.event-image-top img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* Image floats right of all content */
+.event-image-right {
+    float: right;
+    margin: 0 0 12px 20px;
+}
+
+.event-image-right img {
+    border-radius: 4px;
+}
+
+/* Clearfix for float */
+.event-card::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Image tight alongside title heading only */
+.event-title-with-image {
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.event-title-with-image h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.event-title-with-image .card-image {
+    flex-shrink: 0;
+}
 
 /* ===================================================
    20. FOOTER
@@ -1199,7 +1289,7 @@ footer a:hover {
         display: flex;
         flex-direction: column;
         border-left: none;
-        border-top: 1px solid rgba(255,255,255,0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     nav ul li ul li a {
