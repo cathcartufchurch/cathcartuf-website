@@ -702,3 +702,88 @@ _site/
 - [ ] Use `skip_app_build: true` in workflow with `app_location: "_site"`
 - [ ] Use `startTime`/`endTime` fields (not `time`) for reliable event sorting
 - [ ] Test locally with `npx eleventy --serve` before pushing
+
+## Eleventy Watch Page — Issues and Lessons Learned
+
+---
+
+## Issue 18 — YouTube Thumbnail Façade Pattern
+
+**Problem:**
+Loading all YouTube iframes simultaneously on the Watch page caused slow page loads
+— like opening 16 YouTube tabs at once in the browser.
+
+**Fix:**
+Use a thumbnail façade — show a static YouTube thumbnail image with a play button
+overlay. Only load the actual iframe when the user clicks. JavaScript in
+`assets/js/watch.js` handles the swap.
+
+**YouTube thumbnail URL pattern:**
+https://img.youtube.com/vi/[VIDEO_ID]/maxresdefault.jpg
+Use `hqdefault.jpg` as fallback via onerror for older videos without maxresdefault.
+
+**Lesson:**
+Always use the façade pattern for pages with multiple video embeds.
+
+---
+
+## Issue 19 — YouTube ID Extraction Filter
+
+**Problem:**
+Editors paste full YouTube URLs. The embed and thumbnail both need just the video ID.
+
+**Fix:**
+A `youtubeId` filter in `eleventy.config.js` extracts the ID from any YouTube URL format:
+
+```javascript
+eleventyConfig.addFilter("youtubeId", function (url) {
+    if (!url) return "";
+    const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    return match ? match[1] : "";
+});
+```
+
+Handles both:
+- `https://www.youtube.com/watch?v=Buz2nbdTc6s`
+- `https://youtu.be/Buz2nbdTc6s`
+
+**Lesson:**
+Store full URLs in YAML for editor convenience. Extract IDs in the template.
+
+---
+
+## Issue 20 — Series Colours Lookup
+
+**Problem:**
+Repeating the series colour in every YAML file would be error-prone and hard to update.
+
+**Fix:**
+Store series colours once in `_data/watch/series.yaml` as a name-to-colour map.
+A `seriesColours` collection builds a lookup object in `eleventy.config.js`:
+
+```javascript
+eleventyConfig.addCollection("seriesColours", function () {
+    const series = yaml.load(fs.readFileSync(file, "utf8"));
+    const lookup = {};
+    series.forEach(s => { lookup[s.name] = s.colour; });
+    return lookup;
+});
+```
+
+Use in templates as: `collections.seriesColours[service.series]`
+
+**Lesson:**
+Store reference data (colours, categories) in a single YAML file.
+Never repeat the same value across multiple content files.
+
+---
+
+## Watch Page Quick Reference Checklist
+
+- [ ] One YAML file per service in `_data/watch/` (lowercase folder name)
+- [ ] Store full YouTube URL in YAML — filter extracts ID automatically
+- [ ] Series colours defined once in `_data/watch/series.yaml`
+- [ ] Thumbnail façade in `assets/js/watch.js` — linked from `watch.njk`
+- [ ] Watch CSS in `style.css` under section 20b
+- [ ] Placeholder YAML files need filling in before go-live
+- [ ] Filter out entries with no YouTube URL using `if (!service.youtube) return false`
