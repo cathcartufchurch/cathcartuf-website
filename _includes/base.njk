@@ -19,7 +19,8 @@
 
     <nav>
         <div class="container">
-            <ul>
+            <button id="nav-hamburger" aria-label="Open navigation menu" aria-expanded="false">&#9776;</button>
+            <ul id="nav-list">
                 <li><a href="/" {% if activeNav == "home" %}class="active"{% endif %}>Home</a></li>
                 <li>
                     <a href="/meetings/" {% if activeNav == "meetings" %}class="active"{% endif %}>Meetings</a>
@@ -70,6 +71,8 @@
             <p>Scottish Registered Charity No: SC001573</p>
         </div>
     </footer>
+    <script src="/assets/js/nav.js"></script>
+</body>
 
 </body>
 </html>

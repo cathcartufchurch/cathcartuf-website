@@ -1460,23 +1460,50 @@ footer a:hover {
    vertically. Sermon grid becomes single column.
    =================================================== */
 
+/* Hamburger button hidden on desktop — shown only via mobile media query */
+#nav-hamburger {
+    display: none;
+}
+
 @media (max-width: 600px) {
 
     .logo {
         height: 60px;
     }
 
+    /* Hamburger button — hidden on desktop, shown on mobile */
+    #nav-hamburger {
+        display: block;
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 1.6em;
+        cursor: pointer;
+        padding: 8px 0;
+        line-height: 1;
+        margin-left: auto;
+    }
+
     nav ul {
         flex-direction: column;
+        display: none;
+    }
+
+    nav ul.nav-open {
+        display: flex;
     }
 
     nav ul li ul {
         position: static;
         box-shadow: none;
-        display: flex;
+        display: none;
         flex-direction: column;
         border-left: none;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    nav ul li ul.submenu-open {
+        display: flex;
     }
 
     nav ul li ul li a {
