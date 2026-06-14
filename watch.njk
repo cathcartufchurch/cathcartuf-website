@@ -1,0 +1,96 @@
+---
+title: Watch Services at Cathcart United Free Church
+description: Watch recent Sunday services from Cathcart United Free Church, Glasgow.
+activeNav: watch
+layout: base.njk
+---
+
+<div class="container">
+
+    <h2>Watch Services</h2>
+    <p>Watch our recent Sunday services here. For older recordings visit our
+    <a href="https://www.youtube.com/@cathcartufchurch7834/videos" target="_blank" rel="noopener">YouTube channel</a>.</p>
+
+    {% set serviceList = collections.watch | recentServices %}
+
+    {% if serviceList and serviceList.length > 0 %}
+
+        {# ── Latest service — featured at top ── #}
+        {% set latest = serviceList[0] %}
+        {% set latestColour = collections.seriesColours[latest.series] or "#6b7280" %}
+
+        <div class="watch-featured">
+            <div class="watch-embed">
+                <div class="watch-thumbnail"
+                     data-video-id="{{ latest.youtube | youtubeId }}"
+                     data-title="{{ latest.title }}"
+                     style="border-color: {{ latestColour }}">
+                    <img src="https://img.youtube.com/vi/{{ latest.youtube | youtubeId }}/maxresdefault.jpg"
+                         alt="{{ latest.title }}"
+                         onerror="this.src='https://img.youtube.com/vi/{{ latest.youtube | youtubeId }}/hqdefault.jpg'" />
+                    <div class="watch-play-button">&#9654;</div>
+                </div>
+            </div>
+<div class="watch-featured-info">
+    {% if latest.series %}
+    <span class="watch-series-badge" style="background-color: {{ latestColour }}">
+        {{ latest.series }}
+    </span>
+    {% endif %}
+    <p class="watch-featured-title">{{ latest.title }}</p>
+    <p class="watch-meta">
+        {{ latest.date | dateFormat }}
+        {% if latest.preacher %} &bull; {{ latest.preacher }}{% endif %}
+        {% if latest.scripture %} &bull; {{ latest.scripture }}{% endif %}
+        {% if latest.duration %} &bull; {{ latest.duration }}{% endif %}
+    </p>
+</div>
+        </div>
+
+        {# ── Previous services — compact file list ── #}
+        {% if serviceList.length > 1 %}
+        <h3 class="watch-previous-heading">Previous Services</h3>
+        <div class="watch-list">
+            {% for service in serviceList %}
+            {% if not loop.first and service.youtube %}
+            {% set seriesColour = collections.seriesColours[service.series] or "#6b7280" %}
+            <div class="watch-list-item" style="border-left-color: {{ seriesColour }}">
+                <div class="watch-embed watch-embed--small">
+                    <div class="watch-thumbnail"
+                         data-video-id="{{ service.youtube | youtubeId }}"
+                         data-title="{{ service.title }}"
+                         style="border-color: {{ seriesColour }}">
+                        <img src="https://img.youtube.com/vi/{{ service.youtube | youtubeId }}/mqdefault.jpg"
+                             alt="{{ service.title }}" />
+                        <div class="watch-play-button">&#9654;</div>
+                    </div>
+                </div>
+<div class="watch-list-info">
+    {% if service.series %}
+    <span class="watch-series-badge" style="background-color: {{ seriesColour }}">
+        {{ service.series }} 
+    </span>
+    {% endif %}
+    <p class="watch-list-title">{{ service.title }}</p>
+    <p class="watch-meta">
+        {{ service.date | dateFormat }}
+        {% if service.preacher %} &bull; {{ service.preacher }}{% endif %}
+        {% if service.scripture %} &bull; {{ service.scripture }}{% endif %}
+        {% if service.duration %} &bull; {{ service.duration }}{% endif %}
+    </p>
+</div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    {% else %}
+    <p>No recent services available. Please visit our
+    <a href="https://www.youtube.com/@cathcartufchurch7834/videos" target="_blank" rel="noopener">
+    YouTube channel</a> for all recordings.</p>
+    {% endif %}
+
+</div>
+
+<script src="/assets/js/watch.js"></script>

@@ -64,6 +64,14 @@ module.exports = function (eleventyConfig) {
         return marked(content);
     });
 
+    // Extract YouTube video ID from full URL
+    // e.g. "https://www.youtube.com/watch?v=Buz2nbdTc6s" → "Buz2nbdTc6s"
+    eleventyConfig.addFilter("youtubeId", function (url) {
+        if (!url) return "";
+        const match = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        return match ? match[1] : "";
+    });
+
     // ─── News Filters ──────────────────────────────────────────────
 
     // Active news items only, newest first
@@ -129,6 +137,23 @@ module.exports = function (eleventyConfig) {
                 return parseTime(a.startTime) - parseTime(b.startTime);
             });
     });
+    // Services filter — last 6 months, newest first (for Watch page)
+    eleventyConfig.addFilter("recentServices", function (services) {
+        if (!services) return [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        return services
+            .filter(service => {
+                if (!service.youtube) return false;
+                const serviceDate = new Date(service.date);
+                return serviceDate >= sixMonthsAgo && serviceDate <= today;
+            })
+            .sort((a, b) => new Date(b.date) - new Date(a.date));
+    });
+
     // ─── Collections ───────────────────────────────────────────────
 
     // News collection
@@ -159,18 +184,33 @@ module.exports = function (eleventyConfig) {
             ));
     });
 
-    // Sermons collection
-    eleventyConfig.addCollection("sermons", function () {
+    // Watch collection
+    eleventyConfig.addCollection("watch", function () {
         const fs = require("fs");
         const yaml = require("js-yaml");
         const path = require("path");
-        const dir = path.join(__dirname, "_data/sermons");
+        const dir = path.join(__dirname, "_data/watch");
         if (!fs.existsSync(dir)) return [];
         return fs.readdirSync(dir)
             .filter(file => file.endsWith(".yaml"))
             .map(file => yaml.load(
                 fs.readFileSync(path.join(dir, file), "utf8")
             ));
+    });
+
+    // Series colours lookup — maps series name to colour
+    eleventyConfig.addCollection("seriesColours", function () {
+        const fs = require("fs");
+        const yaml = require("js-yaml");
+        const path = require("path");
+        const file = path.join(__dirname, "_data/watch/series.yaml");
+        if (!fs.existsSync(file)) return {};
+        const series = yaml.load(fs.readFileSync(file, "utf8"));
+        const lookup = {};
+        series.forEach(s => {
+            lookup[s.name] = s.colour;
+        });
+        return lookup;
     });
 
     // ─── Return Config ─────────────────────────────────────────────
