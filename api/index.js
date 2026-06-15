@@ -106,3 +106,91 @@ app.http('prayer', {
         }
     }
 });
+
+// OAuth: Step 1 — redirect editor to GitHub login
+app.http('auth', {
+    methods: ['GET'],
+    authLevel: 'anonymous',
+    handler: async (request, context) => {
+        const clientId = process.env.GITHUB_CLIENT_ID;
+        const redirectUri = encodeURIComponent(
+            'https://test.cathcartuf.org.uk/api/auth-callback'
+        );
+        const scope = encodeURIComponent('repo,user');
+        const githubAuthUrl =
+            `https://github.com/login/oauth/authorize` +
+            `?client_id=${clientId}` +
+            `&redirect_uri=${redirectUri}` +
+            `&scope=${scope}`;
+
+        return {
+            status: 302,
+            headers: { location: githubAuthUrl }
+        };
+    }
+});
+
+// OAuth: Step 2 — GitHub returns here with a code; exchange it for a token
+app.http('auth-callback', {
+    methods: ['GET'],
+    authLevel: 'anonymous',
+    handler: async (request, context) => {
+        try {
+            const code = new URL(request.url).searchParams.get('code');
+            if (!code) {
+                return { status: 400, body: 'Missing code parameter' };
+            }
+
+            const tokenResponse = await fetch(
+                'https://github.com/login/oauth/access_token',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        client_id: process.env.GITHUB_CLIENT_ID,
+                        client_secret: process.env.GITHUB_CLIENT_SECRET,
+                        code: code
+                    })
+                }
+            );
+
+            const tokenData = await tokenResponse.json();
+
+            if (tokenData.error) {
+                return {
+                    status: 400,
+                    body: `GitHub OAuth error: ${tokenData.error_description}`
+                };
+            }
+
+            const script = `
+                <script>
+                    (function() {
+                        function receiveMessage(e) {
+                            window.opener.postMessage(
+                                'authorization:github:success:${JSON.stringify({ token: tokenData.access_token, provider: 'github' })}',
+                                e.origin
+                            );
+                        }
+                        window.addEventListener('message', receiveMessage, false);
+                        window.opener.postMessage('authorizing:github', '*');
+                    })();
+                </scr` + `ipt>`;
+
+            return {
+                status: 200,
+                headers: { 'content-type': 'text/html' },
+                body: `<!DOCTYPE html><html><body>${script}</body></html>`
+            };
+
+        } catch (error) {
+            return {
+                status: 200,
+                body: `OAuth error: ${error.message}`
+            };
+        }
+    }
+});

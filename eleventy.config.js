@@ -17,7 +17,6 @@ module.exports = function (eleventyConfig) {
 
     // ─── Passthrough Copies ────────────────────────────────────────
     eleventyConfig.addPassthroughCopy("assets");
-    eleventyConfig.addPassthroughCopy("admin");
     eleventyConfig.addPassthroughCopy("api");
 
     // ─── Ignores ───────────────────────────────────────────────────

@@ -1,19 +1,133 @@
+---
+permalink: /admin/config.yml
+eleventyExcludeFromCollections: true
+---
 backend:
-  name: git-gateway
+  name: github
+  repo: cathcartufchurch/cathcartuf-website
   branch: main
+  base_url: https://test.cathcartuf.org.uk
+  auth_endpoint: /api/auth
 
-media_folder: "assets/images"
+media_folder: assets/images
+public_folder: /assets/images
 
 collections:
-  - name: "events"
-    label: "Events"
-    folder: "_events"
-    create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+
+  - name: series
+    label: Series
+    label_singular: Series
+    file: _data/watch/series.yaml
     fields:
-      - {label: "Title", name: "title", widget: "string"}
-      - {label: "Date", name: "date", widget: "datetime"}
-      - {label: "End Date", name: "end_date", widget: "datetime", required: false}
-      - {label: "Location", name: "location", widget: "string", required: false}
-      - {label: "Featured Image", name: "image", widget: "image", required: false}
-      - {label: "Description", name: "body", widget: "markdown"}
+      - name: series
+        label: Series
+        widget: list
+        fields:
+          - { name: name, label: Name, widget: string }
+          - { name: colour, label: Colour, widget: color }
+
+  - name: events
+    label: Events
+    label_singular: Event
+    folder: _data/events
+    create: true
+    delete: true
+    identifier_field: title
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: yaml
+    format: yaml
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Start Date, widget: date, format: YYYY-MM-DD }
+      - { name: endDate, label: End Date, widget: date, format: YYYY-MM-DD, required: false }
+      - { name: startTime, label: Start Time, widget: string, hint: "e.g. 10:30am" }
+      - { name: endTime, label: End Time, widget: string, hint: "e.g. 12pm", required: false }
+      - { name: location, label: Location, widget: string }
+      - { name: description, label: Description, widget: text, hint: "Plain text only — no formatting" }
+      - { name: image, label: Image, widget: image, required: false }
+      - { name: imageAlt, label: Image Alt Text, widget: string, required: false }
+      - name: imageSize
+        label: Image Size
+        widget: select
+        required: false
+        options:
+          - { label: Small, value: small }
+          - { label: Medium, value: medium }
+          - { label: Large, value: large }
+      - name: imagePosition
+        label: Image Position
+        widget: select
+        required: false
+        options:
+          - { label: Left, value: left }
+          - { label: Right, value: right }
+      - { name: details, label: Details, widget: markdown, required: false, hint: "Supports bold, bullets etc." }
+      - { name: link, label: Link URL, widget: string, required: false }
+      - { name: linkText, label: Link Text, widget: string, required: false }
+      - { name: active, label: Active, widget: boolean, default: true }
+
+  - name: news
+    label: News
+    label_singular: News Item
+    folder: _data/news
+    create: true
+    delete: true
+    identifier_field: title
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: yaml
+    format: yaml
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: date, format: YYYY-MM-DD }
+      - { name: summary, label: Summary, widget: text, required: false, hint: "Short summary shown in listings" }
+      - { name: image, label: Image, widget: image, required: false }
+      - { name: imageAlt, label: Image Alt Text, widget: string, required: false }
+      - name: imageSize
+        label: Image Size
+        widget: select
+        required: false
+        options:
+          - { label: Small (logos), value: small }
+          - { label: Medium, value: medium }
+          - { label: Large, value: large }
+      - { name: details, label: Details, widget: markdown, required: false, hint: "Supports bold, bullets etc." }
+      - { name: link, label: Link URL, widget: string, required: false }
+      - { name: linkText, label: Link Text, widget: string, required: false }
+      - { name: active, label: Active, widget: boolean, default: true }
+      - { name: pinned, label: Pin to top, widget: boolean, default: false }
+
+  - name: watch
+    label: Watch
+    label_singular: Service
+    folder: _data/watch
+    create: true
+    delete: true
+    identifier_field: title
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: yaml
+    format: yaml
+    filter:
+      field: title
+      pattern: "^(?!series)"
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: date, label: Date, widget: date, format: YYYY-MM-DD }
+      - { name: preacher, label: Preacher, widget: string, required: false }
+      - { name: scripture, label: Scripture, widget: string, required: false, hint: "e.g. Philippians 1:1–11" }
+      - name: series
+        label: Series
+        widget: select
+        required: false
+        options:
+{%- for item in collections.seriesList %}
+          - {{ item.name }}
+{%- endfor %}
+      - { name: youtube, label: YouTube URL, widget: string, required: false, hint: "Full URL e.g. https://www.youtube.com/watch?v=abc123" }
+      - { name: duration, label: Duration, widget: string, required: false, hint: "e.g. 45 minutes" }
+      - name: type
+        label: Service Type
+        widget: select
+        required: false
+        options:
+          - { label: Morning, value: morning }
+          - { label: Evening, value: evening }

@@ -787,3 +787,79 @@ Never repeat the same value across multiple content files.
 - [ ] Watch CSS in `style.css` under section 20b
 - [ ] Placeholder YAML files need filling in before go-live
 - [ ] Filter out entries with no YouTube URL using `if (!service.youtube) return false`
+
+---
+
+## Issue 21 — Mobile Navigation: Hamburger Menu
+
+**What was built:**
+A mobile hamburger menu for the site navigation, consisting of three files working together:
+
+- `assets/js/nav.js` — handles the toggle behaviour
+- `_includes/base.njk` — adds the hamburger button element and loads the script
+- `assets/css/style.css` — defines the mobile styles in section 21
+
+**How it works:**
+
+CSS and JavaScript play different roles — like a set of folding doors and the person who opens them. The CSS defines what the nav looks like in each state (open/closed). The JavaScript listens for taps and flips the relevant CSS classes on and off.
+
+Three behaviours are implemented in `nav.js`:
+1. Tapping the hamburger button toggles the whole nav open/closed via `.nav-open` on `#nav-list`
+2. Tapping a parent link (Meetings, Prayer, Church Life) toggles its submenu via `.submenu-open`
+3. Tapping any leaf link (a real destination) closes the whole nav automatically
+
+**Key principle — JS detects mobile by checking CSS, not pixels:**
+
+```javascript
+function isMobileNav() {
+    return window.getComputedStyle(hamburger).display !== "none";
+}
+```
+
+This means the breakpoint is defined once in CSS only — no magic pixel numbers duplicated in JS.
+
+---
+
+**Problem encountered: `position: static` applying on desktop**
+
+**Symptom:**
+Submenus pushed page content down on desktop instead of floating over it. Mouse cursor landed on the wrong nav item after a submenu closed.
+
+**Cause:**
+The mobile `nav ul li ul` block (with `position: static`) was placed outside the `@media (max-width: 600px)` wrapper, so it applied to all screen sizes and overrode the `position: absolute` rule in section 4a.
+
+**Fix:**
+Ensure all mobile nav rules are inside the `@media` block, not before or after it.
+
+**Lesson:**
+Any rule that should only apply on mobile must be inside the `@media` block. A rule outside it applies everywhere regardless of screen width.
+
+---
+
+**Problem encountered: Inconsistent behaviour when testing with a narrowed desktop window**
+
+**Symptom:**
+Nav behaved inconsistently — some submenus stayed open, others collapsed unexpectedly. Behaviour differed between Chrome and Opera.
+
+**Cause:**
+Manually narrowing a desktop browser window to below 600px puts the browser in a "grey zone" where both the mobile CSS and desktop hover CSS are partially active simultaneously. This is not a real use case — no genuine visitor browses a desktop site in a sub-600px window.
+
+**Fix:**
+None needed. Use proper mobile emulation (F12 → phone/tablet icon in Chrome DevTools) or test on a real mobile device. Never use a narrowed desktop window as a substitute for mobile testing.
+
+**Lesson:**
+Always test mobile behaviour using Chrome DevTools device emulation (F12 → phone/tablet icon) or a real device. A narrowed desktop window is not a valid mobile test environment.
+
+---
+
+## Mobile Navigation Quick Reference Checklist
+
+- [ ] Hamburger button added to `<nav>` in `base.njk` with `id="nav-hamburger"` and `aria-expanded="false"`
+- [ ] `id="nav-list"` added to the main `<ul>` in `base.njk`
+- [ ] `<script src="/assets/js/nav.js"></script>` added just before `</body>` in `base.njk`
+- [ ] `#nav-hamburger { display: none; }` added **outside** the `@media` block in `style.css`
+- [ ] All mobile nav rules inside `@media (max-width: 600px)` — never outside it
+- [ ] `nav ul` has `display: none` on mobile, `display: flex` when `.nav-open` is present
+- [ ] `nav ul li ul` has `display: none` on mobile, `display: flex` when `.submenu-open` is present
+- [ ] Test using Chrome DevTools device emulation (F12 → phone/tablet icon), not a narrowed desktop window
+- [ ] Test on a real mobile device once deployed to `test.cathcartuf.org.uk`
