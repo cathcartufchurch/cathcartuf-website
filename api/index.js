@@ -151,7 +151,7 @@ app.http('auth-callback', {
                     },
                     body: JSON.stringify({
                         client_id: process.env.GITHUB_OAUTH_CLIENT_ID,
-                        client_secret: process.env.GITHUB=OAUTH_CLIENT_SECRET,
+                        client_secret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
                         code: code
                     })
                 }
