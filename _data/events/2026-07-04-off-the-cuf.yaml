@@ -1,15 +1,15 @@
-title: "Off the CUF"
+title: Off the CUF
 date: 2026-07-04
-endDate: ""
-startTime: "10:30am"
-endTime: "12pm"
-location: "Cathcart United Free Church"
-description: "Our monthly café-style gathering exploring a theme that speaks to our shared human experience. Food, Friendship and Faith — free and open to all. Children welcome, under the responsibility of a parent or carer."
-image: "/assets/images/OffTheCUFPoster.jpg"
-imageAlt: "Off the CUF poster"
-imageSize: "medium"
-imagePosition: "right"
-details: ""
-link: "/church-life/off-the-cuf/"
-linkText: "Find out more about Off the CUF"
+endDate: ''
+startTime: 10:30am
+endTime: 12pm
+location: Cathcart United Free Church
+description: .
+image: /assets/images/OffTheCUFPoster.jpg
+imageAlt: Off the CUF poster
+imageSize: medium
+imagePosition: right
+details: Our monthly café-style gathering exploring a theme that speaks to our shared human experience. **Food**, **Friendship** and **Faith** — _free and open_ to all. Children welcome, under the responsibility of a parent or carer.
+link: /church-life/off-the-cuf/
+linkText: Find out more about Off the CUF
 active: true
