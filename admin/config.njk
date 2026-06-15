@@ -2,21 +2,6 @@
 permalink: /admin/config.yml
 eleventyExcludeFromCollections: true
 ---
-
-{# ---------------------------------------------------------
-   Load the raw YAML list from _data/watch/series.yaml
-   Eleventy exposes it as: series (because file is series.yaml)
----------------------------------------------------------- #}
-{% set rawSeries = series %}
-
-{# ---------------------------------------------------------
-   Wrap the list in an object so Sveltia CMS can bind to it
-   Sveltia requires: series: [ ... ]
----------------------------------------------------------- #}
-{% set seriesWrapped = { "series": rawSeries } %}
-
-
-
 backend:
   name: github
   repo: cathcartufchurch/cathcartuf-website
@@ -43,7 +28,6 @@ collections:
             fields:
               - { name: name, label: Name, widget: string }
               - { name: colour, label: Colour, widget: color }
-            default: {{ seriesWrapped.series | dump }}  
 
   - name: events
     label: Events
