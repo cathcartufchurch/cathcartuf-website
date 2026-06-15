@@ -112,7 +112,7 @@ app.http('auth', {
     methods: ['GET'],
     authLevel: 'anonymous',
     handler: async (request, context) => {
-        const clientId = process.env.CLIENT_ID;
+        const clientId = process.env.GITHUB_OAUTH_CLIENT_ID;
         const redirectUri = encodeURIComponent(
             'https://test.cathcartuf.org.uk/api/auth-callback'
         );
@@ -150,8 +150,8 @@ app.http('auth-callback', {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        client_id: process.env.CLIENT_ID,
-                        client_secret: process.env.CLIENT_SECRET,
+                        client_id: process.env.GITHUB_OAUTH_CLIENT_ID,
+                        client_secret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
                         code: code
                     })
                 }
