@@ -204,7 +204,7 @@ module.exports = function (eleventyConfig) {
         const path = require("path");
         const file = path.join(__dirname, "_data/watch/series.yaml");
         if (!fs.existsSync(file)) return {};
-        const series = yaml.load(fs.readFileSync(file, "utf8"));
+        const series = yaml.load(fs.readFileSync(file, "utf8")).series || [];
         const lookup = {};
         series.forEach(s => {
             lookup[s.name] = s.colour;
@@ -219,7 +219,7 @@ module.exports = function (eleventyConfig) {
         const path = require("path");
         const file = path.join(__dirname, "_data/watch/series.yaml");
         if (!fs.existsSync(file)) return [];
-        return yaml.load(fs.readFileSync(file, "utf8"));
+        return yaml.load(fs.readFileSync(file, "utf8")).series ||[];
     });
 
     // Series options — global data for use in config.njk template
@@ -229,7 +229,7 @@ module.exports = function (eleventyConfig) {
         const path = require("path");
         const file = path.join(__dirname, "_data/watch/series.yaml");
         if (!fs.existsSync(file)) return [];
-        return yaml.load(fs.readFileSync(file, "utf8"));
+        return yaml.load(fs.readFileSync(file, "utf8")).series || [];
     });
 
     // ─── Return Config ─────────────────────────────────────────────
