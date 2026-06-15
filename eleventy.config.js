@@ -212,6 +212,26 @@ module.exports = function (eleventyConfig) {
         return lookup;
     });
 
+    // Series list — raw array of { name, colour } for use in config.yml template
+    eleventyConfig.addCollection("seriesList", function () {
+        const fs = require("fs");
+        const yaml = require("js-yaml");
+        const path = require("path");
+        const file = path.join(__dirname, "_data/watch/series.yaml");
+        if (!fs.existsSync(file)) return [];
+        return yaml.load(fs.readFileSync(file, "utf8"));
+    });
+
+    // Series options — global data for use in config.njk template
+    eleventyConfig.addGlobalData("seriesOptions", function () {
+        const fs = require("fs");
+        const yaml = require("js-yaml");
+        const path = require("path");
+        const file = path.join(__dirname, "_data/watch/series.yaml");
+        if (!fs.existsSync(file)) return [];
+        return yaml.load(fs.readFileSync(file, "utf8"));
+    });
+
     // ─── Return Config ─────────────────────────────────────────────
     return {
         htmlTemplateEngine: false,

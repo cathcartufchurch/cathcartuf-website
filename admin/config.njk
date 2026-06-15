@@ -17,14 +17,17 @@ collections:
   - name: series
     label: Series
     label_singular: Series
-    file: _data/watch/series.yaml
-    fields:
+    files:
       - name: series
         label: Series
-        widget: list
+        file: _data/watch/series.yaml
         fields:
-          - { name: name, label: Name, widget: string }
-          - { name: colour, label: Colour, widget: color }
+          - name: series
+            label: Series
+            widget: list
+            fields:
+              - { name: name, label: Name, widget: string }
+              - { name: colour, label: Colour, widget: color }
 
   - name: events
     label: Events
@@ -33,17 +36,17 @@ collections:
     create: true
     delete: true
     identifier_field: title
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{% raw %}{{year}}-{{month}}-{{day}}-{{slug}}{% endraw %}"
     extension: yaml
     format: yaml
     fields:
       - { name: title, label: Title, widget: string }
-      - { name: date, label: Start Date, widget: date, format: YYYY-MM-DD }
-      - { name: endDate, label: End Date, widget: date, format: YYYY-MM-DD, required: false }
+      - { name: date, label: Start Date, widget: datetime, type: date, format: YYYY-MM-DD }
+      - { name: endDate, label: End Date, widget: datetime, type: date, format: YYYY-MM-DD, required: false }
       - { name: startTime, label: Start Time, widget: string, hint: "e.g. 10:30am" }
       - { name: endTime, label: End Time, widget: string, hint: "e.g. 12pm", required: false }
       - { name: location, label: Location, widget: string }
-      - { name: description, label: Description, widget: text, hint: "Plain text only — no formatting" }
+      - { name: description, label: Description, widget: text, hint: "Plain text only - no formatting" }
       - { name: image, label: Image, widget: image, required: false }
       - { name: imageAlt, label: Image Alt Text, widget: string, required: false }
       - name: imageSize
@@ -73,12 +76,12 @@ collections:
     create: true
     delete: true
     identifier_field: title
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{% raw %}{{year}}-{{month}}-{{day}}-{{slug}}{% endraw %}"
     extension: yaml
     format: yaml
     fields:
       - { name: title, label: Title, widget: string }
-      - { name: date, label: Date, widget: date, format: YYYY-MM-DD }
+      - { name: date, label: Date, widget: datetime, type: date, format: YYYY-MM-DD }
       - { name: summary, label: Summary, widget: text, required: false, hint: "Short summary shown in listings" }
       - { name: image, label: Image, widget: image, required: false }
       - { name: imageAlt, label: Image Alt Text, widget: string, required: false }
@@ -103,7 +106,7 @@ collections:
     create: true
     delete: true
     identifier_field: title
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{% raw %}{{year}}-{{month}}-{{day}}-{{slug}}{% endraw %}"
     extension: yaml
     format: yaml
     filter:
@@ -111,15 +114,15 @@ collections:
       pattern: "^(?!series)"
     fields:
       - { name: title, label: Title, widget: string }
-      - { name: date, label: Date, widget: date, format: YYYY-MM-DD }
+      - { name: date, label: Date, widget: datetime, type: date, format: YYYY-MM-DD }
       - { name: preacher, label: Preacher, widget: string, required: false }
-      - { name: scripture, label: Scripture, widget: string, required: false, hint: "e.g. Philippians 1:1–11" }
+      - { name: scripture, label: Scripture, widget: string, required: false, hint: "e.g. Philippians 1:1-11" }
       - name: series
         label: Series
         widget: select
         required: false
         options:
-{%- for item in collections.seriesList %}
+{%- for item in seriesOptions %}
           - {{ item.name }}
 {%- endfor %}
       - { name: youtube, label: YouTube URL, widget: string, required: false, hint: "Full URL e.g. https://www.youtube.com/watch?v=abc123" }
