@@ -1,3 +1,5 @@
 series:
   - name: test
     colour: '#2d327c'
+  - name: test2
+    colour: '#f40b0b'
