@@ -20,7 +20,7 @@ collections:
     files:
       - name: series
         label: Series
-        file: _data/watch/series.yaml
+        file: _data/series/series.yaml
         fields:
           - name: series
             label: Series
@@ -109,9 +109,6 @@ collections:
     slug: "{% raw %}{{year}}-{{month}}-{{day}}-{{slug}}{% endraw %}"
     extension: yaml
     format: yaml
-    filter:
-      field: title
-      pattern: "^(?!series)"
     fields:
       - { name: title, label: Title, widget: string }
       - { name: date, label: Date, widget: datetime, type: date, format: YYYY-MM-DD }

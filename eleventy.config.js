@@ -202,7 +202,7 @@ module.exports = function (eleventyConfig) {
         const fs = require("fs");
         const yaml = require("js-yaml");
         const path = require("path");
-        const file = path.join(__dirname, "_data/watch/series.yaml");
+        const file = path.join(__dirname, "_data/series/series.yaml");
         if (!fs.existsSync(file)) return {};
         const series = yaml.load(fs.readFileSync(file, "utf8")).series || [];
         const lookup = {};
@@ -217,7 +217,7 @@ module.exports = function (eleventyConfig) {
         const fs = require("fs");
         const yaml = require("js-yaml");
         const path = require("path");
-        const file = path.join(__dirname, "_data/watch/series.yaml");
+        const file = path.join(__dirname, "_data/series/series.yaml");
         if (!fs.existsSync(file)) return [];
         return yaml.load(fs.readFileSync(file, "utf8")).series ||[];
     });
@@ -227,7 +227,7 @@ module.exports = function (eleventyConfig) {
         const fs = require("fs");
         const yaml = require("js-yaml");
         const path = require("path");
-        const file = path.join(__dirname, "_data/watch/series.yaml");
+        const file = path.join(__dirname, "_data/series/series.yaml");
         if (!fs.existsSync(file)) return [];
         return yaml.load(fs.readFileSync(file, "utf8")).series || [];
     });
