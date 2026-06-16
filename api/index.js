@@ -188,7 +188,7 @@ app.http('auth-callback', {
 
         } catch (error) {
             return {
-                status: 200,
+                status: 500,
                 body: `OAuth error: ${error.message}`
             };
         }
