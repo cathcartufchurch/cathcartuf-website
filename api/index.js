@@ -250,7 +250,7 @@ app.http('calendar', {
             const timeMin = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
             const timeMax = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
             const apiUrl = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`
-                + `?timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=false&maxResults=100`;
+                + `?timeMin=${timeMin}&timeMax=${timeMax}&orderBy=startTime&singleEvents=true&maxResults=100`;
 
             const eventsResponse = await fetch(apiUrl, {
                 headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
