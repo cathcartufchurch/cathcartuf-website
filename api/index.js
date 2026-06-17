@@ -11,7 +11,7 @@ app.http('contact', {
             const { name, email, message, phone, wantZoom } = body;
 
             if (!name || !email || !message) {
-                return { 
+                return {
                     status: 400,
                     jsonBody: { error: "Missing required fields" }
                 };
@@ -61,7 +61,7 @@ app.http('prayer', {
             const { name, email, phone, prayerRequest, isPrivate, wantZoom } = body;
 
             if (!name || !prayerRequest) {
-                return { 
+                return {
                     status: 400,
                     jsonBody: { error: "Missing required fields" }
                 };
@@ -216,20 +216,20 @@ app.http('calendar', {
                     .replace(/=/g, '');
             }
 
-            const header  = base64urlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
-            const claim   = base64urlEncode(JSON.stringify({
-                iss:   credentials.client_email,
+            const header = base64urlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+            const claim = base64urlEncode(JSON.stringify({
+                iss: credentials.client_email,
                 scope: 'https://www.googleapis.com/auth/calendar.readonly',
-                aud:   'https://oauth2.googleapis.com/token',
-                exp:   now + 3600,
-                iat:   now
+                aud: 'https://oauth2.googleapis.com/token',
+                exp: now + 3600,
+                iat: now
             }));
 
-            const sigInput  = `${header}.${claim}`;
-            const signer    = crypto.createSign('SHA256');
+            const sigInput = `${header}.${claim}`;
+            const signer = crypto.createSign('SHA256');
             signer.update(sigInput);
             const signature = base64urlEncode(signer.sign(credentials.private_key));
-            const jwt       = `${sigInput}.${signature}`;
+            const jwt = `${sigInput}.${signature}`;
 
             // Exchange the JWT for a Google access token
             const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
@@ -247,28 +247,28 @@ app.http('calendar', {
             }
 
             // Fetch events from Google Calendar — next 12 months, max 100 events
-            const timeMin = new Date().toISOString();
+            const timeMin = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
             const timeMax = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
-            const apiUrl  = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`
-                          + `?timeMin=${timeMin}&timeMax=${timeMax}&orderBy=startTime&singleEvents=true&maxResults=100`;
+            const apiUrl = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`
+                + `?timeMin=${timeMin}&timeMax=${timeMax}&orderBy=startTime&singleEvents=true&maxResults=100`;
 
             const eventsResponse = await fetch(apiUrl, {
                 headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
             });
 
-            const data   = await eventsResponse.json();
+            const data = await eventsResponse.json();
             const events = (data.items || []).map(event => ({
-                title:       event.summary              || 'No title',
-                start:       event.start.dateTime       || event.start.date,
-                end:         event.end.dateTime         || event.end.date,
-                description: event.description          || '',
-                location:    event.location             || ''
+                title: event.summary || 'No title',
+                start: event.start.dateTime || event.start.date,
+                end: event.end.dateTime || event.end.date,
+                description: event.description || '',
+                location: event.location || ''
             }));
 
             return {
                 status: 200,
                 headers: {
-                    'Content-Type':  'application/json',
+                    'Content-Type': 'application/json',
                     'Cache-Control': 'public, max-age=300'
                 },
                 jsonBody: events
