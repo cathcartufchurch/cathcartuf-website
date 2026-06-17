@@ -863,3 +863,342 @@ Always test mobile behaviour using Chrome DevTools device emulation (F12 → pho
 - [ ] `nav ul li ul` has `display: none` on mobile, `display: flex` when `.submenu-open` is present
 - [ ] Test using Chrome DevTools device emulation (F12 → phone/tablet icon), not a narrowed desktop window
 - [ ] Test on a real mobile device once deployed to `test.cathcartuf.org.uk`
+
+---
+
+## Sveltia CMS Setup — Issues and Lessons Learned
+
+---
+
+## Issue 22 — Static CMS Config Can't Read Dynamic Data
+
+**Problem:**
+`admin/config.yml` is a static file read once when the CMS loads in the browser. It
+cannot dynamically read data from other files at runtime — for example, reading series
+names from `_data/series/series.yaml` to populate a dropdown. Any dropdown options
+must be hardcoded in the config file, which means they go stale when the underlying
+data changes.
+
+**Fix:**
+Convert `admin/config.yml` into an Eleventy template: rename it to `admin/config.njk`
+and add front matter with a permalink pointing back to `config.yml`:
+
+```njk
+---
+permalink: /admin/config.yml
+eleventyExcludeFromCollections: true
+---
+backend:
+  name: github
+  ...
+```
+
+Eleventy processes the template at build time and writes the output to
+`_site/admin/config.yml`. This is like a mail merge — Eleventy fills in the blanks
+from live data before the CMS ever sees the file. The CMS still receives a plain
+`config.yml`, but it's been generated fresh with the current series list on every build.
+
+**Consequence:**
+The `admin/` folder must be removed from `addPassthroughCopy` in `eleventy.config.js`
+— otherwise Eleventy copies `config.njk` unchanged instead of processing it.
+
+**Lesson:**
+Git-based CMS config files are static by default. If any part of the config needs to
+reflect live data (dropdowns, option lists), convert the config to an Eleventy template.
+Remove `admin/` from passthrough copies when doing so.
+
+---
+
+## Issue 23 — Nunjucks Interprets CMS Slug Patterns as Template Variables
+
+**Problem:**
+Sveltia CMS uses `{{year}}-{{month}}-{{day}}-{{slug}}` as the filename slug pattern.
+When `config.yml` is converted to a Nunjucks template (`config.njk`), Nunjucks
+interprets these `{{ }}` blocks as template variables, tries to evaluate them, and
+outputs empty strings — like a mail merge template that can't find the fields it's
+looking for.
+
+**Symptom:**
+The generated `config.yml` showed `slug: "---"` instead of
+`slug: "{{year}}-{{month}}-{{day}}-{{slug}}"`.
+
+**Fix:**
+Wrap each slug line in `{% raw %}` and `{% endraw %}` tags to tell Nunjucks "do not
+process this — output it exactly as written":
+
+```njk
+slug: "{% raw %}{{year}}-{{month}}-{{day}}-{{slug}}{% endraw %}"
+```
+
+**Lesson:**
+Any `{{ }}` syntax in a Nunjucks template that is not intended as a Nunjucks variable
+must be wrapped in `{% raw %}...{% endraw %}`. This applies to any CMS slug pattern
+or other framework-specific template syntax that shares Nunjucks' double-brace notation.
+
+---
+
+## Issue 24 — Eleventy Collection Name Clashing with Global Data
+
+**Problem:**
+Eleventy automatically exposes files in `_data/` as global data variables. A folder
+called `_data/watch/` containing `series.yaml` would normally be accessible as
+`watch.series` in templates. However, a custom collection named `watch` was already
+defined in `eleventy.config.js`, and this overrides the global data variable of the
+same name. The global data becomes inaccessible.
+
+**Symptom:**
+`{{ watch | dump }}` in `config.njk` output nothing — the `watch` variable was empty
+even though `_data/watch/series.yaml` existed.
+
+**Fix:**
+Use `addGlobalData` to explicitly expose the series data under a unique name that
+doesn't clash with any collection:
+
+```javascript
+eleventyConfig.addGlobalData("seriesOptions", function () {
+    const fs = require("fs");
+    const yaml = require("js-yaml");
+    const path = require("path");
+    const file = path.join(__dirname, "_data/series/series.yaml");
+    if (!fs.existsSync(file)) return [];
+    return yaml.load(fs.readFileSync(file, "utf8")).series || [];
+});
+```
+
+Then reference it in `config.njk` as `seriesOptions`.
+
+**Lesson:**
+Never name a custom collection the same as a `_data/` subfolder. If a clash exists,
+use `addGlobalData` with a unique name to expose the data explicitly. Global data
+registered via `addGlobalData` is also available earlier in the build cycle than
+custom collections, making it more reliable for use in templates like `config.njk`.
+
+---
+
+## Issue 25 — series.yaml Structure Must Have a Wrapper Key for Sveltia CMS
+
+**Problem:**
+`_data/series/series.yaml` was originally a plain array:
+
+```yaml
+- name: "Acts"
+  colour: "#2563eb"
+- name: "Philippians"
+  colour: "#7c3aed"
+```
+
+Sveltia CMS's `files:` collection type expects the file to have a named top-level key
+matching the field name defined in the config. Without it, the CMS loads the Series
+collection but shows blank entries.
+
+**Fix:**
+Add a top-level `series:` wrapper key to `series.yaml`:
+
+```yaml
+series:
+  - name: "Acts"
+    colour: "#2563eb"
+  - name: "Philippians"
+    colour: "#7c3aed"
+```
+
+Update all three places in `eleventy.config.js` that read this file to extract the
+nested array:
+
+```javascript
+yaml.load(fs.readFileSync(file, "utf8")).series || []
+```
+
+**Lesson:**
+When using Sveltia CMS's `files:` collection type to manage a YAML file, the file
+must have a top-level key matching the field name defined in `config.njk`. A plain
+array at the root level will load without errors but display blank fields in the CMS.
+
+---
+
+## Issue 26 — Sveltia CMS Widget and Collection Type Differences from Decap CMS
+
+**Problem:**
+Sveltia CMS does not support all of Decap CMS's widget types and collection syntax
+identically. Two specific differences caused errors on load.
+
+**Difference 1 — Date widget deprecated:**
+Sveltia CMS does not support `widget: date`. Use `widget: datetime` with `type: date`
+instead:
+
+```yaml
+# Decap (incorrect for Sveltia):
+- { name: date, widget: date, format: YYYY-MM-DD }
+
+# Sveltia (correct):
+- { name: date, widget: datetime, type: date, format: YYYY-MM-DD }
+```
+
+**Difference 2 — Single-file collections use `files:` not `file:`:**
+A collection that manages a single file (like `series.yaml`) uses the `files:` key
+(plural) with the file definition nested one level deeper:
+
+```yaml
+# Incorrect:
+- name: series
+  file: _data/series/series.yaml
+  fields: [...]
+
+# Correct:
+- name: series
+  files:
+    - name: series
+      label: Series
+      file: _data/series/series.yaml
+      fields: [...]
+```
+
+**Lesson:**
+When migrating from Decap CMS to Sveltia CMS, check for deprecated widget types and
+collection syntax differences. The Sveltia CMS documentation is the authoritative
+source — do not assume identical syntax.
+
+---
+
+## Issue 27 — GitHub OAuth Callback URL Must Match Exactly
+
+**Problem:**
+The GitHub OAuth App was registered with a callback URL of
+`https://test.cathcartuf.org.uk/api/auth/callback` (slash before `callback`).
+The Azure Function was named `auth-callback` (hyphen before `callback`), producing
+a URL of `https://test.cathcartuf.org.uk/api/auth-callback`. GitHub rejected the
+mismatch and returned a 404 page.
+
+**Symptom:**
+After completing GitHub login, the browser landed on GitHub's own 404 page rather
+than returning to the CMS.
+
+**Fix:**
+Update the Authorization callback URL in the GitHub OAuth App settings to match the
+Azure Function URL exactly:
+```
+https://test.cathcartuf.org.uk/api/auth-callback
+```
+
+**Lesson:**
+The GitHub OAuth App callback URL and the Azure Function endpoint URL must be
+character-for-character identical — including hyphens vs slashes. Check both
+the GitHub OAuth App settings and the function name in `api/index.js` when
+debugging OAuth redirect failures.
+
+---
+
+## Issue 28 — Azure Environment Variable Names Must Match Code Exactly
+
+**Problem:**
+The OAuth client ID and secret were stored in Azure Static Web App environment
+variables as `GITHUB_OAUTH_CLIENT_ID` and `GITHUB_OAUTH_CLIENT_SECRET`. The
+initial function code used `process.env.GITHUB_CLIENT_ID` and
+`process.env.GITHUB_CLIENT_SECRET` (without `_OAUTH_`). The variables resolved
+to `undefined`, which was passed directly to GitHub in the OAuth redirect URL.
+
+**Symptom:**
+The GitHub OAuth redirect URL contained `client_id=undefined`, which GitHub
+rejected with a 404 page immediately on clicking Login.
+
+**Fix:**
+Update the function code to use the exact variable names configured in Azure:
+
+```javascript
+const clientId = process.env.GITHUB_OAUTH_CLIENT_ID;
+// ...
+client_id: process.env.GITHUB_OAUTH_CLIENT_ID,
+client_secret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
+```
+
+**Lesson:**
+Azure environment variable names are case-sensitive and must match `process.env`
+references in code character for character. When OAuth produces `undefined` values,
+the first thing to check is the environment variable names in both the Azure portal
+and the function code.
+
+---
+
+## Issue 29 — series.yaml Must Live Outside _data/watch/ to Avoid CMS Contamination
+
+**Problem:**
+`series.yaml` was originally stored in `_data/watch/` alongside the individual watch
+service YAML files. The Sveltia CMS Watch collection reads all YAML files in that
+folder, so `series.yaml` appeared as an entry in the Watch list — like a filing
+cabinet index card appearing in a search alongside all the actual files.
+
+A `filter:` was added to `config.njk` to exclude it, but this did not work reliably
+in Sveltia CMS.
+
+**Fix:**
+Move `series.yaml` to its own dedicated folder: `_data/series/series.yaml`. Update
+all three path references in `eleventy.config.js` (`seriesColours`, `seriesList`,
+`seriesOptions`) and the `file:` path in `admin/config.njk`.
+
+The Watch collection then only contains actual service entries, and the `filter:`
+can be removed entirely.
+
+**Lesson:**
+Reference data files (like series definitions, category lists) should never share
+a folder with content files managed by the CMS. Give them their own `_data/`
+subfolder. This is cleaner than using CMS filters to exclude them, and prevents
+accidental deletion by editors.
+
+---
+
+## Sveltia CMS — Correct Final Structure
+
+```
+repo-root/
+├── _data/
+│   ├── events/             ← one YAML file per event
+│   ├── news/               ← one YAML file per news item
+│   ├── series/
+│   │   └── series.yaml     ← series names and colours (managed via CMS)
+│   └── watch/              ← one YAML file per service recording
+├── _includes/
+│   └── base.njk
+├── admin/
+│   ├── index.html          ← loads Sveltia CMS from CDN
+│   └── config.njk          ← Eleventy template → outputs _site/admin/config.yml
+├── api/
+│   └── index.js            ← contact, prayer, auth, auth-callback functions
+└── eleventy.config.js
+```
+
+**Key points:**
+- `admin/` is NOT in `addPassthroughCopy` — Eleventy processes `config.njk` as a template
+- `series.yaml` is in `_data/series/` not `_data/watch/`
+- `seriesOptions` global data (not `seriesList` collection) feeds the Watch series dropdown
+
+---
+
+## Sveltia CMS Quick Reference Checklist
+
+**Initial setup:**
+- [ ] Replace `admin/index.html` with Sveltia CDN script tag
+- [ ] Rename `admin/config.yml` → `admin/config.njk`
+- [ ] Add front matter with `permalink: /admin/config.yml` and `eleventyExcludeFromCollections: true`
+- [ ] Remove `admin/` from `addPassthroughCopy` in `eleventy.config.js`
+- [ ] Register GitHub OAuth App with callback URL matching the Azure Function endpoint exactly
+- [ ] Store OAuth credentials in Azure as environment variables; match names exactly in `process.env`
+- [ ] Add `auth` and `auth-callback` functions to `api/index.js`
+
+**Config file:**
+- [ ] Use `widget: datetime` with `type: date` — not `widget: date`
+- [ ] Use `files:` (plural) for single-file collections, with file definition nested inside
+- [ ] Wrap CMS slug patterns in `{% raw %}...{% endraw %}` to prevent Nunjucks processing them
+- [ ] Use `addGlobalData` (not `addCollection`) to expose data for use in `config.njk`
+- [ ] Never name a custom collection the same as a `_data/` subfolder
+
+**Series management:**
+- [ ] `series.yaml` lives in `_data/series/` — not in `_data/watch/`
+- [ ] `series.yaml` uses a top-level `series:` wrapper key (not a plain array)
+- [ ] All three `eleventy.config.js` readers extract `.series` from the loaded YAML
+- [ ] `seriesOptions` global data populates the Watch series dropdown in `config.njk`
+- [ ] When a new series is added via CMS → site rebuilds → dropdown updates automatically
+
+**Production cutover:**
+- [ ] Update `base_url` in `config.njk` from `test.cathcartuf.org.uk` to `cathcartuf.org.uk`
+- [ ] Update `redirectUri` in `auth` function to `cathcartuf.org.uk`
+- [ ] Update GitHub OAuth App callback URL to match

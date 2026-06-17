@@ -194,3 +194,92 @@ app.http('auth-callback', {
         }
     }
 });
+
+// Google Calendar — fetch events and return as JSON
+app.http('calendar', {
+    methods: ['GET'],
+    authLevel: 'anonymous',
+    handler: async (request, context) => {
+        try {
+            const crypto = require('crypto');
+            const credentials = JSON.parse(process.env.GOOGLE_CALENDAR_CREDENTIALS);
+            const calendarId = process.env.GOOGLE_CALENDAR_ID;
+
+            // Build a JWT — like a signed letter that proves who we are to Google
+            const now = Math.floor(Date.now() / 1000);
+
+            function base64urlEncode(input) {
+                const buf = Buffer.isBuffer(input) ? input : Buffer.from(input);
+                return buf.toString('base64')
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
+            }
+
+            const header  = base64urlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+            const claim   = base64urlEncode(JSON.stringify({
+                iss:   credentials.client_email,
+                scope: 'https://www.googleapis.com/auth/calendar.readonly',
+                aud:   'https://oauth2.googleapis.com/token',
+                exp:   now + 3600,
+                iat:   now
+            }));
+
+            const sigInput  = `${header}.${claim}`;
+            const signer    = crypto.createSign('SHA256');
+            signer.update(sigInput);
+            const signature = base64urlEncode(signer.sign(credentials.private_key));
+            const jwt       = `${sigInput}.${signature}`;
+
+            // Exchange the JWT for a Google access token
+            const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+                    assertion: jwt
+                })
+            });
+
+            const tokenData = await tokenResponse.json();
+            if (!tokenData.access_token) {
+                throw new Error('Failed to get access token: ' + JSON.stringify(tokenData));
+            }
+
+            // Fetch events from Google Calendar — next 12 months, max 100 events
+            const timeMin = new Date().toISOString();
+            const timeMax = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+            const apiUrl  = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`
+                          + `?timeMin=${timeMin}&timeMax=${timeMax}&orderBy=startTime&singleEvents=true&maxResults=100`;
+
+            const eventsResponse = await fetch(apiUrl, {
+                headers: { 'Authorization': `Bearer ${tokenData.access_token}` }
+            });
+
+            const data   = await eventsResponse.json();
+            const events = (data.items || []).map(event => ({
+                title:       event.summary              || 'No title',
+                start:       event.start.dateTime       || event.start.date,
+                end:         event.end.dateTime         || event.end.date,
+                description: event.description          || '',
+                location:    event.location             || ''
+            }));
+
+            return {
+                status: 200,
+                headers: {
+                    'Content-Type':  'application/json',
+                    'Cache-Control': 'public, max-age=300'
+                },
+                jsonBody: events
+            };
+
+        } catch (error) {
+            context.log.error('Calendar error:', error.message);
+            return {
+                status: 500,
+                jsonBody: { error: error.message }
+            };
+        }
+    }
+});
