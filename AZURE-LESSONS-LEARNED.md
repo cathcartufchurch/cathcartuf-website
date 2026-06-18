@@ -1202,3 +1202,219 @@ repo-root/
 - [ ] Update `base_url` in `config.njk` from `test.cathcartuf.org.uk` to `cathcartuf.org.uk`
 - [ ] Update `redirectUri` in `auth` function to `cathcartuf.org.uk`
 - [ ] Update GitHub OAuth App callback URL to match
+---
+
+## Google Calendar Integration — Issues and Lessons Learned
+
+---
+
+## Issue 30 — Porting PHP Google Calendar Integration to Azure Functions
+
+**Problem:**
+The existing WordPress calendar used a PHP plugin to authenticate with Google Calendar
+via a Service Account and return events to FullCalendar. PHP ran server-side, so the
+private key was never exposed to the browser. A static Azure site has no PHP — the
+private key cannot be in the browser (anyone with DevTools could read it), so the
+authentication must move to an Azure Function.
+
+**Solution:**
+Create an Azure Function called `calendar` that replicates the PHP logic in Node.js:
+1. Reads credentials from an Azure environment variable
+2. Signs a JWT using Node.js's built-in `crypto` module — no extra npm packages needed
+3. Exchanges the JWT for a Google access token
+4. Calls the Google Calendar API and returns events as JSON
+5. The static page calls `/api/calendar` and passes the result to FullCalendar
+
+Think of it like a secure window between the browser and Google — the browser asks
+the function "what events are there?", the function goes to Google with the private
+key, gets the answer, and passes it back. The key never crosses to the browser side.
+
+**Credentials storage:**
+The Google Service Account JSON file must never be committed to GitHub. Store the
+entire JSON file contents as a single Azure Static Web App environment variable:
+
+| Variable | Value |
+|---|---|
+| `GOOGLE_CALENDAR_CREDENTIALS` | Entire contents of the JSON credentials file |
+| `GOOGLE_CALENDAR_ID` | The calendar ID (e.g. `cathcartuftech@gmail.com`) |
+
+**Key function code pattern:**
+```javascript
+const crypto = require('crypto');
+const credentials = JSON.parse(process.env.GOOGLE_CALENDAR_CREDENTIALS);
+
+function base64urlEncode(input) {
+    const buf = Buffer.isBuffer(input) ? input : Buffer.from(input);
+    return buf.toString('base64')
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+// Build JWT header and claim
+const header  = base64urlEncode(JSON.stringify({ alg: 'RS256', typ: 'JWT' }));
+const claim   = base64urlEncode(JSON.stringify({
+    iss:   credentials.client_email,
+    scope: 'https://www.googleapis.com/auth/calendar.readonly',
+    aud:   'https://oauth2.googleapis.com/token',
+    exp:   now + 3600,
+    iat:   now
+}));
+
+// Sign with private key using built-in crypto — no extra packages needed
+const signer    = crypto.createSign('SHA256');
+signer.update(`${header}.${claim}`);
+const signature = base64urlEncode(signer.sign(credentials.private_key));
+```
+
+**Lesson:**
+The PHP JWT signing logic ports directly to Node.js using the built-in `crypto`
+module — no additional npm packages required. Store credentials as an Azure
+environment variable, never in the repo. Always test the `/api/calendar` endpoint
+directly in the browser before testing the full calendar page — a JSON array of
+events confirms authentication is working before FullCalendar is involved.
+
+---
+
+## Issue 31 — Google Calendar API: singleEvents Required for Recurring Events
+
+**Problem:**
+The Google Calendar API `orderBy=startTime` parameter only works when
+`singleEvents=true` is also set. Removing `singleEvents=true` (or setting it to
+`false`) while keeping `orderBy=startTime` causes the API to return HTTP 500.
+
+Additionally, without `singleEvents=true`, recurring events are not expanded into
+individual instances. If a recurring event was created with a start date outside
+your query's `timeMin`/`timeMax` range (e.g. a weekly Sunday service created in
+2020 queried from 6 months ago), Google won't find any matching instances and
+returns no results for that event.
+
+Think of it like asking a library catalogue "show me all copies of this book borrowed
+this year." Without expanding the catalogue to show individual loans, it only looks
+at the original acquisition date — which is outside the range — and finds nothing.
+
+**Symptom:**
+- Removing `singleEvents=true` caused HTTP 500 from the Google Calendar API
+- Calendar appeared to work but recurring events were missing entirely
+
+**Fix:**
+Always use `singleEvents=true` when querying with a date range. Use a `maxResults`
+value large enough to cover the full date range — the WordPress version used 750,
+which covers 18 months of weekly recurring events comfortably:
+
+```javascript
+`?timeMin=${timeMin}&timeMax=${timeMax}&orderBy=startTime&singleEvents=true&maxResults=750`
+```
+
+**Date range:**
+Use 6 months back and 1 year forward to match the WordPress behaviour:
+
+```javascript
+const timeMin = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000).toISOString();
+const timeMax = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+```
+
+**Lesson:**
+`singleEvents=true` is required whenever querying Google Calendar with a date range
+that may not include the original creation date of a recurring event. Never remove
+it. The `maxResults` default of 100 is too low for a calendar with weekly recurring
+events — use 750 or higher. Always verify the WordPress/original version's API
+parameters before changing them.
+
+---
+
+## Issue 32 — Eleventy layout: vs Nunjucks {% extends %}
+
+**Problem:**
+A new page (`calendar.njk`) was created using Nunjucks block inheritance
+(`{% extends %}` and `{% block content %}`). The site's `base.njk` template uses
+Eleventy's layout system (`{{ content | safe }}`), not Nunjucks block inheritance.
+The two systems are incompatible — like posting a letter to the wrong address
+format. Nunjucks looked for `{% block %}` definitions in `base.njk`, found none,
+and produced empty output. The page rendered with the site header and footer
+intact but a completely blank content area.
+
+**Symptom:**
+- Header and footer rendered correctly
+- Content area completely blank
+- Browser Network tab showed no requests being made
+- Page source showed no `<script>` or `<link>` tags in the content area
+
+**Fix:**
+Use Eleventy's `layout:` front matter instead of `{% extends %}`, and remove
+`{% block %}` wrappers. The content renders directly without a wrapping `<main>`
+tag (since `base.njk` already provides this via `{{ content | safe }}`):
+
+```njk
+---
+title: Calendar
+layout: base.njk
+---
+<div class="container">
+    <h1>Calendar</h1>
+    ...
+</div>
+```
+
+Note: `layout: base.njk` not `layout: _includes/base.njk` — Eleventy automatically
+looks in the `_includes/` folder specified in `eleventy.config.js`, so the path
+prefix is not needed.
+
+**Lesson:**
+Check how existing pages reference their layout before creating a new page. All
+pages on this site use `layout: base.njk` in front matter. Never use
+`{% extends %}` unless `base.njk` has matching `{% block %}` definitions.
+The `{% extends %}` approach requires both sides to agree on block names — it
+is a Nunjucks feature, not an Eleventy feature.
+
+---
+
+## Issue 33 — seriesColours Lookup Fails Due to Folder Name Typo
+
+**Problem:**
+The `seriesColours` collection in `eleventy.config.js` reads `series.yaml` from
+`_data/series/`. A typo in the folder name meant Eleventy could not find the file,
+so `seriesColours` returned an empty object. The Watch page rendered all service
+entries correctly but with no colour coding on the series badges or left border.
+
+**Symptom:**
+- Watch page entries displayed correctly
+- All series badges and borders showed the default grey (`#6b7280`) fallback colour
+- No errors in the Eleventy build output — an empty object is valid, just unhelpful
+
+**Fix:**
+Correct the folder name to `series` (lowercase). Verify by running
+`npx eleventy --serve` locally and checking the Watch page.
+
+**Lesson:**
+Colour lookup failures are silent — Eleventy builds without errors because an
+empty object is valid. If series colours are missing on the Watch page, check
+the `_data/series/` folder name matches exactly what `eleventy.config.js` expects.
+Remember that folder names are case-sensitive on Linux (GitHub Actions) but not
+on Windows (local development) — always verify in the GitHub file browser after
+creating or renaming folders.
+
+---
+
+## Google Calendar Quick Reference Checklist
+
+**Google Cloud setup (per environment — do once for WordPress, once for Azure):**
+- [ ] Create Google Cloud project at `console.cloud.google.com`
+- [ ] Enable Google Calendar API under APIs & Services → Library
+- [ ] Create Service Account under APIs & Services → Credentials
+- [ ] Download JSON credentials file — store securely, never commit to GitHub
+- [ ] Share the Google Calendar with the service account email (See all event details)
+- [ ] Note the Calendar ID from Calendar Settings → Integrate calendar
+
+**Azure setup:**
+- [ ] Store full JSON credentials file contents in Azure env var `GOOGLE_CALENDAR_CREDENTIALS`
+- [ ] Store calendar ID in Azure env var `GOOGLE_CALENDAR_ID`
+- [ ] Add `calendar` function to `api/index.js`
+- [ ] Create `calendar.njk` at repo root using `layout: base.njk`
+- [ ] Test `/api/calendar` endpoint directly before testing the full page
+- [ ] Confirm `singleEvents=true` and `orderBy=startTime` are both present in the API URL
+- [ ] Use `maxResults=750` — default 100 is too low for weekly recurring events
+- [ ] Use 6 months back / 1 year forward as the date range
+
+**Production:**
+- [ ] Create a separate Azure-specific Google service account (clean separation from WordPress)
+- [ ] Update `GOOGLE_CALENDAR_CREDENTIALS` in Azure with new JSON
+- [ ] Decommission WordPress service account once WordPress site is retired
